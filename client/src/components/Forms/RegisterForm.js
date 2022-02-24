@@ -61,7 +61,7 @@ const RegisterForm = () => {
     postData();
 
     // clear form value
-    setFormState({ username: "", thought: "" });
+    setFormState({ username: "", email: "" });
     setCharacterCount(0);
   };
 
