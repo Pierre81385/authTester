@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-const RegisterForm = () => {
+const ProfileForm = () => {
   const [formState, setFormState] = useState({
     username: "",
     email: "",
@@ -101,4 +101,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default ProfileForm;

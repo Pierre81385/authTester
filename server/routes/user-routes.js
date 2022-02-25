@@ -31,7 +31,7 @@ router.get("/users", (req, res) => {
 
 // get user account information
 router.get("/users/:username", (req, res) => {
-  console.log(`Querying for thought(s) from ${req.params.username}.`);
+  console.log(`Querying for user information from ${req.params.username}.`);
   const params = {
     TableName: table,
     ProjectionExpression: "#un, #em, #ca, #img",
