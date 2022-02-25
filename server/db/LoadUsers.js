@@ -13,11 +13,12 @@ const allUsers = JSON.parse(fs.readFileSync("./server/seed/user.json", "utf8"));
 
 allUsers.forEach((user) => {
   const params = {
-    TableName: "Thoughts",
+    TableName: "Users",
     Item: {
+      image: user.image,
       username: user.username,
+      email: user.email,
       createdAt: user.createdAt,
-      thought: user.thought,
     },
   };
 

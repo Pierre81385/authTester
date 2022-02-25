@@ -34,13 +34,14 @@ router.get("/users/:username", (req, res) => {
   console.log(`Querying for user information from ${req.params.username}.`);
   const params = {
     TableName: table,
-    ProjectionExpression: "#un, #em, #ca, #img",
+    ProjectionExpression: "#un, #em, #ca, #img, #fuid",
     KeyConditionExpression: "#un = :user",
     ExpressionAttributeNames: {
-      "#img": "image", 
       "#un": "username",
+      "#img": "image",
       "#em": "email",
       "#ca": "createdAt",
+      "#fuid": "firebaseUid",
     },
     ExpressionAttributeValues: {
       ":user": req.params.username,
@@ -63,9 +64,10 @@ router.post("/users", (req, res) => {
   const params = {
     TableName: table,
     Item: {
-      image: req.body.image, 
+      image: req.body.image,
       username: req.body.username,
       email: req.body.email,
+      firebaseUid: req.body.userId,
       createdAt: Date.now(),
     },
   };
