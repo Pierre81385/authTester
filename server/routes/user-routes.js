@@ -12,10 +12,10 @@ AWS.config.update(awsConfig);
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 //define table to be working on
-const table = "Users";
+const table = "Posts";
 
 //create route to get all users
-router.get("/users", (req, res) => {
+router.get("/posts", (req, res) => {
   const params = {
     TableName: table,
   };
@@ -30,11 +30,11 @@ router.get("/users", (req, res) => {
 });
 
 // get user account information
-router.get("/users/:username", (req, res) => {
+router.get("/posts/:username", (req, res) => {
   console.log(`Querying for user information from ${req.params.username}.`);
   const params = {
     TableName: table,
-    ProjectionExpression: "#un, #em, #ca, #img, #fuid",
+    ProjectionExpression: "#un, #em, #ca, #img, #fuid, #cm",
     KeyConditionExpression: "#un = :user",
     ExpressionAttributeNames: {
       "#un": "username",
@@ -42,6 +42,7 @@ router.get("/users/:username", (req, res) => {
       "#em": "email",
       "#ca": "createdAt",
       "#fuid": "firebaseUid",
+      "#cm": "comment",
     },
     ExpressionAttributeValues: {
       ":user": req.params.username,
@@ -59,8 +60,8 @@ router.get("/users/:username", (req, res) => {
   });
 });
 
-// Create new user
-router.post("/users", (req, res) => {
+// Create new user post
+router.post("/posts", (req, res) => {
   const params = {
     TableName: table,
     Item: {
@@ -69,6 +70,7 @@ router.post("/users", (req, res) => {
       email: req.body.email,
       firebaseUid: req.body.userId,
       createdAt: Date.now(),
+      comment: req.body.comment,
     },
   };
   dynamodb.put(params, (err, data) => {

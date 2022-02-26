@@ -1,4 +1,4 @@
-//create table 
+//create table
 
 const AWS = require("aws-sdk");
 
@@ -9,7 +9,7 @@ AWS.config.update({
 const dynamodb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
 
 const params = {
-  TableName: "Users",
+  TableName: "Posts",
   KeySchema: [
     { AttributeName: "username", KeyType: "HASH" },
     { AttributeName: "createdAt", KeyType: "RANGE" },

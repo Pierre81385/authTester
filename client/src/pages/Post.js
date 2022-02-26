@@ -1,24 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 import { query, collection, getDocs, where } from "firebase/firestore";
-import { auth, db, logout } from "../firebase/firebase";
+import { auth, db } from "../firebase/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router-dom";
 
-const Profile = () => {
+const Post = () => {
   const style = {};
 
   const history = useHistory();
 
   const [user, loading, error] = useAuthState(auth);
-  const [formState, setFormState] = useState({
-    username: "",
-    email: "",
-  });
+
   const [characterCount, setCharacterCount] = useState(0);
   const [userInfo, setUserInfo] = useState({
     username: "",
     email: "",
-    userId: ""
+    userId: "",
+    comment: "",
   });
 
   const fetchUserName = async () => {
@@ -26,11 +24,11 @@ const Profile = () => {
       const q = query(collection(db, "users"), where("uid", "==", user?.uid));
       const doc = await getDocs(q);
       const data = doc.docs[0].data();
-      console.log(data.uid)
+      console.log(data.uid);
       setUserInfo({
         username: data.name,
         email: data.email,
-        userId: data.uid
+        userId: data.uid,
       });
     } catch (err) {
       console.error(err);
@@ -74,7 +72,8 @@ const Profile = () => {
   // update state based on form input changes
   const handleChange = (event) => {
     if (event.target.value.length <= 280) {
-      //setFormState({ ...formState, [event.target.name]: event.target.value });
+      setUserInfo({ ...userInfo, [event.target.name]: event.target.value });
+      console.log(userInfo.comment);
       setCharacterCount(event.target.value.length);
     }
   };
@@ -84,7 +83,7 @@ const Profile = () => {
     event.preventDefault();
 
     const postData = async () => {
-      const res = await fetch("/api/users", {
+      const res = await fetch("/api/posts", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -98,7 +97,7 @@ const Profile = () => {
     postData();
 
     // clear form value
-    //setFormState({ username: "", email: "" });
+    setUserInfo({ username: "", email: "", userId: "", comment: "" });
     setCharacterCount(0);
   };
 
@@ -132,7 +131,18 @@ const Profile = () => {
                 className="form-input col-12 "
                 onChange={handleChange}
               ></input> */}
-
+              <p
+                className={`m-0 ${characterCount === 280 ? "text-error" : ""}`}
+              >
+                Character Count: {characterCount}/280
+              </p>
+              <textarea
+                placeholder="Comment..."
+                name="comment"
+                value={userInfo.comment}
+                className="form-input col-12 "
+                onChange={handleChange}
+              ></textarea>
               <button className="btn col-12 " type="submit">
                 Submit
               </button>
@@ -144,4 +154,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Post;
