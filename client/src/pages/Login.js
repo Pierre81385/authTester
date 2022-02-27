@@ -1,3 +1,7 @@
+//Notes:
+//Authorization is handled by Firebase, and currently accepts users created on firebase with email OR a users GMAIL account.
+//Other accounts to be accepted include Facebook, Instagram, and Apple.  
+
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
@@ -19,8 +23,8 @@ function Login() {
     if (user) history.replace("/");
   }, [user, loading]);
   return (
-    <div className="login">
-      <div className="login__container">
+    <div>
+      <div>
         <form>
           <input
             type="text"

@@ -7,7 +7,7 @@ A basic framework for user login and profile creation.
 
 - Image uploading and storage is handled by AWS S3
 
-- AWS DynamoDB stores image address from S3, and user information from Firestore in a single document.
+- AWS DynamoDB stores image address from S3, and user information from Firestore in a single document in the context of a post.
 
 - Express for backend routes
 
@@ -16,7 +16,9 @@ A basic framework for user login and profile creation.
 # REMINDER
 
 - hide firebase API keys with .env
+- Integrate Stripe payment
+- Integrate Facebook login via Firebase
 
-- create new bucket with correct name
+
 
 

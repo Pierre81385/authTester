@@ -34,7 +34,7 @@ router.get("/posts/:username", (req, res) => {
   console.log(`Querying for user information from ${req.params.username}.`);
   const params = {
     TableName: table,
-    ProjectionExpression: "#un, #em, #ca, #img, #fuid, #cm",
+    ProjectionExpression: "#un, #em, #ca, #img, #fuid, #desc, #tl",
     KeyConditionExpression: "#un = :user",
     ExpressionAttributeNames: {
       "#un": "username",
@@ -42,7 +42,8 @@ router.get("/posts/:username", (req, res) => {
       "#em": "email",
       "#ca": "createdAt",
       "#fuid": "firebaseUid",
-      "#cm": "comment",
+      "#tl": "title",
+      "#desc": "description",
     },
     ExpressionAttributeValues: {
       ":user": req.params.username,
@@ -70,7 +71,8 @@ router.post("/posts", (req, res) => {
       email: req.body.email,
       firebaseUid: req.body.userId,
       createdAt: Date.now(),
-      comment: req.body.comment,
+      title: req.body.title,
+      description: req.body.description,
     },
   };
   dynamodb.put(params, (err, data) => {
