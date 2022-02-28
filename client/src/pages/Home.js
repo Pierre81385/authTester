@@ -14,13 +14,14 @@ function Home() {
   const [posts, setPosts] = useState([]);
   const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [comments, setComments] = useState([]);
+  const [state, setState] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const history = useHistory();
   const [commentInfo, setCommentInfo] = useState({
     postCreatedAt: "",
     comment: "",
     firebaseUserId: "",
   });
+  const history = useHistory();
 
   const fetchUserName = async () => {
     try {
@@ -71,8 +72,14 @@ function Home() {
         console.log(error);
       }
     };
+
     fetchData();
-  }, []);
+
+    if (submitted) {
+      console.log("new comments submitted");
+      fetchData();
+    }
+  }, [submitted]);
 
   useEffect(() => {
     console.log("checking login status");
@@ -81,14 +88,11 @@ function Home() {
     fetchUserName();
   }, [user, loading]);
 
-  useEffect(() => {
-    console.log("comment submitted " + submitted);
-  });
-
   const renderPosts = (post) => {
     const handleChange = (event) => {
       if (event.target.value.length <= 280) {
         setCommentInfo({
+          username: name,
           postCreatedAt: post.createdAt.toString(),
           comment: event.target.value,
           firebaseUserId: post.firebaseUid,
@@ -123,25 +127,16 @@ function Home() {
       setSubmitted(true);
     };
 
-    // const fetchComments = async () => {
-    //   try {
-    //     console.log("getting comments for " + post.createdAt);
-    //     const res = await fetch(`/api/comments/${post.createdAt}`);
-    //     const data = await res.json();
-    //     setComments([...data]);
-    //     setCommentsLoaded(true);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-
     const renderComments = (comment) => {
       return (
         <div>
           {comment.postCreatedAt === post.createdAt.toString() ? (
             <>
               <h2>{comment.comment}</h2>
-              <h5>Comment made on {Date(comment.createdAt).toString()}</h5>
+              <h5>
+                Comment made on {Date(comment.createdAt).toString()} by{" "}
+                {comment.username}
+              </h5>
             </>
           ) : (
             <></>

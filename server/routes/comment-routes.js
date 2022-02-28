@@ -36,10 +36,11 @@ router.get("/comments/:postCreatedAt", (req, res) => {
   );
   const params = {
     TableName: table,
-    ProjectionExpression: "#pca, #cm, #ca",
+    ProjectionExpression: "#pca, #un, #cm, #ca",
     KeyConditionExpression: "#pca = :postCreatedAt",
     ExpressionAttributeNames: {
       "#pca": "postCreatedAt",
+      "#un": "username",
       "#cm": "comment",
       "#ca": "createdAt",
     },
@@ -59,12 +60,13 @@ router.get("/comments/:postCreatedAt", (req, res) => {
   });
 });
 
-// Create new post
+// Create new comment
 router.post("/comments", (req, res) => {
   const params = {
     TableName: table,
     Item: {
       postCreatedAt: req.body.postCreatedAt,
+      username: req.body.username,
       comment: req.body.comment,
       firebaseUid: req.body.userId,
       createdAt: Date.now(),
