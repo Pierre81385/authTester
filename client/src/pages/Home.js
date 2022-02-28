@@ -23,6 +23,7 @@ function Home() {
   });
   const history = useHistory();
 
+  //query Firebase Firestore USERS table for user name and image data.  Update name and profileImage state with data.
   const fetchUserName = async () => {
     try {
       const q = query(collection(db, "users"), where("uid", "==", user?.uid));
@@ -36,6 +37,7 @@ function Home() {
     }
   };
 
+  //query DynamoDB POSTS table for all posts.  Update posts state with data.
   useEffect(() => {
     console.log("getting posts");
     const fetchData = async () => {
@@ -55,6 +57,7 @@ function Home() {
     fetchData();
   }, []);
 
+  //query DynamoDB COMMENTS table for all comments.  Update comments state with data.  Reupdate if submitted state is true.
   useEffect(() => {
     console.log("getting comments");
     const fetchData = async () => {
@@ -81,6 +84,7 @@ function Home() {
     }
   }, [submitted]);
 
+  //on render, check login status and redirect if not logged in, or load user information via fetchUserName()
   useEffect(() => {
     console.log("checking login status");
     if (loading) return;
@@ -88,7 +92,9 @@ function Home() {
     fetchUserName();
   }, [user, loading]);
 
+  //render posts mapped from posts state array
   const renderPosts = (post) => {
+    //set commentInfo state in preparation for submit
     const handleChange = (event) => {
       if (event.target.value.length <= 280) {
         setCommentInfo({
@@ -100,6 +106,8 @@ function Home() {
         setCharacterCount(event.target.value.length);
       }
     };
+
+    //submit comment
     const handleFormSubmit = (event) => {
       event.preventDefault();
 
