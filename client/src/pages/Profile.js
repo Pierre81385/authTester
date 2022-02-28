@@ -10,6 +10,8 @@ function Profile() {
       image: "",
       title: "",
       description: "",
+      createdAt: "",
+      email: "",
     },
   ]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -31,11 +33,14 @@ function Profile() {
   }, [userParam]);
 
   const renderPosts = (post) => {
-    console.log(post.username);
+
+    var d = Date(post.createdAt).toString()    
+
     return (
       <div>
         <img src={post.image} style={style.img}></img>
         <h1>{post.title}</h1>
+        <h4>{d}</h4>
         <h3>By {post.username}</h3>
         <h4>{post.description}</h4>
       </div>
@@ -50,11 +55,17 @@ function Profile() {
       marginLeft: "auto",
       marginRight: "auto",
     },
+    container: {
+      textAlign: "center",
+    },
   };
 
+  //add image upload option where submit button creates the user profile document
+
   return (
-    <div className="flex-row justify-space-between">
-      <div className={`col-12 mb-3 `}>{posts.map(renderPosts)}</div>
+    <div style={style.container}>
+      <h1>Viewing {userParam ? `${userParam}'s` : "your"} posts.</h1>
+      <div>{posts.map(renderPosts)}</div>
     </div>
   );
 }

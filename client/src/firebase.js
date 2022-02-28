@@ -18,15 +18,14 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC3mdPkpOyG1VUZgZGI1oQ8yqquNC0C7Bc",
-    authDomain: "authtester-5f324.firebaseapp.com",
-    projectId: "authtester-5f324",
-    storageBucket: "authtester-5f324.appspot.com",
-    messagingSenderId: "297700089734",
-    appId: "1:297700089734:web:f844728b61590d0ced5607",
-    measurementId: "G-SWZ3PN2FL2"
-  };
-  
+  apiKey: "AIzaSyC3mdPkpOyG1VUZgZGI1oQ8yqquNC0C7Bc",
+  authDomain: "authtester-5f324.firebaseapp.com",
+  projectId: "authtester-5f324",
+  storageBucket: "authtester-5f324.appspot.com",
+  messagingSenderId: "297700089734",
+  appId: "1:297700089734:web:f844728b61590d0ced5607",
+  measurementId: "G-SWZ3PN2FL2",
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -63,7 +62,7 @@ const logInWithEmailAndPassword = async (email, password) => {
   }
 };
 
-const registerWithEmailAndPassword = async (name, email, password) => {
+const registerWithEmailAndPassword = async (image, name, email, password) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
@@ -94,11 +93,11 @@ const logout = () => {
 };
 
 export {
-    auth,
-    db,
-    signInWithGoogle,
-    logInWithEmailAndPassword,
-    registerWithEmailAndPassword,
-    sendPasswordReset,
-    logout,
-  };
+  auth,
+  db,
+  signInWithGoogle,
+  logInWithEmailAndPassword,
+  registerWithEmailAndPassword,
+  sendPasswordReset,
+  logout,
+};
