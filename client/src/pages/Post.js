@@ -15,7 +15,7 @@ const Post = () => {
   const [user, loading, error] = useAuthState(auth);
 
   const [characterCount, setCharacterCount] = useState(0);
-  const [userInfo, setUserInfo] = useState({
+  const [postInfo, setPostInfo] = useState({
     username: "",
     email: "",
     userId: "",
@@ -29,7 +29,7 @@ const Post = () => {
       const doc = await getDocs(q);
       const data = doc.docs[0].data();
       console.log(data.uid);
-      setUserInfo({
+      setPostInfo({
         username: data.name,
         email: data.email,
         userId: data.uid,
@@ -62,7 +62,7 @@ const Post = () => {
         });
         if (!res.ok) throw new Error(res.statusText);
         const postResponse = await res.json();
-        setUserInfo({ ...userInfo, image: postResponse.Location });
+        setPostInfo({ ...postInfo, image: postResponse.Location });
 
         return postResponse.Location;
       } catch (error) {
@@ -76,9 +76,9 @@ const Post = () => {
   // update state based on form input changes
   const handleChange = (event) => {
     if (event.target.value.length <= 280) {
-      setUserInfo({ ...userInfo, [event.target.name]: event.target.value });
-      console.log(userInfo.description);
-      console.log(userInfo.title);
+      setPostInfo({ ...postInfo, [event.target.name]: event.target.value });
+      console.log(postInfo.description);
+      console.log(postInfo.title);
       setCharacterCount(event.target.value.length);
     }
   };
@@ -94,7 +94,7 @@ const Post = () => {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userInfo),
+        body: JSON.stringify(postInfo),
       });
       const data = await res.json();
       console.log(data);
@@ -102,7 +102,7 @@ const Post = () => {
     postData();
 
     // clear form value
-    setUserInfo({
+    setPostInfo({
       username: "",
       email: "",
       userId: "",
@@ -128,9 +128,10 @@ const Post = () => {
   return (
     <main>
       <div style={style.container}>
-        <img src={userInfo.image} style={style.img}></img>
-        <h4>{userInfo.comment}</h4>
-        <div className="col-12 mb-3" style={{ backgroundColor: "grey" }}>
+        <img src={postInfo.image} style={style.img}></img>
+        <h2>{postInfo.title}</h2>
+        <h4>{postInfo.description}</h4>
+        <div className="col-12 mb-3">
           <label className="form-input col-12  p-1">
             Add an image to your profile:
           </label>
@@ -144,7 +145,7 @@ const Post = () => {
             <input
               placeholder="Title"
               name="title"
-              value={userInfo.title}
+              value={postInfo.title}
               className="form-input col-12 "
               onChange={handleChange}
             ></input>
@@ -155,7 +156,7 @@ const Post = () => {
             <textarea
               placeholder="Description..."
               name="description"
-              value={userInfo.description}
+              value={postInfo.description}
               className="form-input col-12 "
               onChange={handleChange}
             ></textarea>

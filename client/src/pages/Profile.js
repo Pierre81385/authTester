@@ -1,6 +1,10 @@
 //get all posts by username and display here
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db, logout } from "../firebase";
+import { query, collection, getDocs, where } from "firebase/firestore";
 
 function Profile() {
   const { username: userParam } = useParams();
@@ -15,6 +19,20 @@ function Profile() {
     },
   ]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [profileImage, setProfileImage] = useState("");
+  const history = useHistory();
+
+  const fetchUser = async () => {
+    try {
+      const q = query(collection(db, "users"), where("name", "==", userParam));
+      const doc = await getDocs(q);
+      const data = doc.docs[0].data();
+      setProfileImage(data.image);
+    } catch (err) {
+      console.error(err);
+      alert("An error occured while fetching user data");
+    }
+  };
 
   useEffect(() => {
     console.log("getting posts");
@@ -32,9 +50,13 @@ function Profile() {
     fetchData();
   }, [userParam]);
 
-  const renderPosts = (post) => {
+  useEffect(() => {
+    
+    fetchUser();
+  }) 
 
-    var d = Date(post.createdAt).toString()    
+  const renderPosts = (post) => {
+    var d = Date(post.createdAt).toString();
 
     return (
       <div>
@@ -55,6 +77,14 @@ function Profile() {
       marginLeft: "auto",
       marginRight: "auto",
     },
+    profile: {
+      marginTop: "30px",
+      width: "300px",
+      display: "block",
+      marginLeft: "auto",
+      marginRight: "auto",
+      borderRadius: "50%",
+    },
     container: {
       textAlign: "center",
     },
@@ -64,6 +94,7 @@ function Profile() {
 
   return (
     <div style={style.container}>
+      <img src={profileImage} style={style.profile} />
       <h1>Viewing {userParam ? `${userParam}'s` : "your"} posts.</h1>
       <div>{posts.map(renderPosts)}</div>
     </div>
