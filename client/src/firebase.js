@@ -68,9 +68,10 @@ const registerWithEmailAndPassword = async (image, name, email, password) => {
     const user = res.user;
     await addDoc(collection(db, "users"), {
       uid: user.uid,
+      image: image,
       name,
-      authProvider: "local",
       email,
+      authProvider: "local",
     });
   } catch (err) {
     console.error(err);

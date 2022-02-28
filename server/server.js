@@ -3,8 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3001;
-const profileRoutes = require("./routes/profile-routes");
 const imageRoutes = require("./routes/image-upload");
+const postRoutes = require("./routes/post-routes");
 
 // express middleware, used to be bodyparser
 app.use(express.json());
@@ -15,8 +15,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // app.use(require('./routes'));
-app.use("/api/", profileRoutes);
 app.use("/api/", imageRoutes);
+app.use("/api/", postRoutes);
 
 // Start the API server
 app.listen(PORT, () =>
