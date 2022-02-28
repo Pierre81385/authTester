@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 function Home() {
   const [user, loading, error] = useAuthState(auth);
   const [name, setName] = useState("");
+  const [profileImage, setProfileImage] = useState("");
   const history = useHistory();
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,6 +20,7 @@ function Home() {
       const doc = await getDocs(q);
       const data = doc.docs[0].data();
       setName(data.name);
+      setProfileImage(data.image);
     } catch (err) {
       console.error(err);
       alert("An error occured while fetching user data");
@@ -81,7 +83,7 @@ function Home() {
   return (
     <div className="dashboard">
       <div className="dashboard__container">
-        Logged in as
+        <img src={profileImage} style={style.img}/>
         <div>{name}</div>
         <div>{user?.email}</div>
         <button className="dashboard__btn" onClick={logout}>
