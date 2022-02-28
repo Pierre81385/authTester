@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router-dom";
-import { auth, db, logout } from "../firebase/firebase";
+import { auth, db, logout } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
-import PostsList from "../components/PostsList";
+import { Link } from "react-router-dom";
 
 function Home() {
   const [user, loading, error] = useAuthState(auth);
@@ -56,7 +56,13 @@ function Home() {
       <div>
         <img src={post.image} style={style.img}></img>
         <h1>{post.title}</h1>
-        <h3>By {post.username}</h3>
+        <Link
+          to={`/profile/${post.username}`}
+          style={{ fontWeight: 700 }}
+          className="text-light"
+        >
+          By {post.username}
+        </Link>
         <h4>{post.description}</h4>
       </div>
     );

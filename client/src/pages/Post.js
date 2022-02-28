@@ -4,7 +4,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { query, collection, getDocs, where } from "firebase/firestore";
-import { auth, db } from "../firebase/firebase";
+import { auth, db } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router-dom";
 

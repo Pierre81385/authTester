@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Post from "./pages/Post";
 import Register from "./pages/Register";
 import Reset from "./pages/Reset";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/post" component={Post} />
+          <Route exact path="/profile/:username" component={Profile} />
         </Switch>
       </div>
     </Router>
