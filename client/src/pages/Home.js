@@ -4,22 +4,30 @@ import { useHistory, useParams } from "react-router-dom";
 import { auth, db, logout } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import { getMultiFactorResolver } from "firebase/auth";
 
 function Home() {
   const [user, loading, error] = useAuthState(auth);
   const [name, setName] = useState("");
   const [profileImage, setProfileImage] = useState("");
   const [characterCount, setCharacterCount] = useState(0);
+  const [replyCharacterCount, setReplyCharacterCount] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [posts, setPosts] = useState([]);
   const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [comments, setComments] = useState([]);
-  const [state, setState] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [replySubmitted, setReplySubmitted] = useState(false);
+  const [display, setDisplay] = useState("none");
+  const [replyButton, setReplyButton] = useState("Reply");
   const [commentInfo, setCommentInfo] = useState({
     postCreatedAt: "",
     comment: "",
-    firebaseUserId: "",
+    //firebaseUserId: "",
+  });
+  const [replyInfo, setReplyInfo] = useState({
+    commentCreatedAt: "",
+    reply: "",
   });
   const history = useHistory();
 
@@ -84,6 +92,8 @@ function Home() {
     }
   }, [submitted]);
 
+  //query DynamoDB REPLYS table for all replys.  Update replys state with data.  Reupdate if replySubmitted state is true.
+
   //on render, check login status and redirect if not logged in, or load user information via fetchUserName()
   useEffect(() => {
     console.log("checking login status");
@@ -101,8 +111,9 @@ function Home() {
           username: name,
           postCreatedAt: post.createdAt.toString(),
           comment: event.target.value,
-          firebaseUserId: post.firebaseUid,
+          //firebaseUserId: post.firebaseUid,
         });
+        //console.log("firebase user id is: " + commentInfo.firebaseUserId);
         setCharacterCount(event.target.value.length);
       }
     };
@@ -129,15 +140,67 @@ function Home() {
       setCommentInfo({
         postCreatedAt: "",
         comment: "",
-        firebaseUserId: "",
+        //firebaseUserId: "",
       });
       setCharacterCount(0);
       setSubmitted(true);
     };
 
     const renderComments = (comment) => {
+      //set replyInfo state in preparation for submit
+      const handleReplyChange = (event) => {
+        if (event.target.value.length <= 280) {
+          setReplyInfo({
+            username: name,
+            commentCreatedAt: comment.createdAt.toString(),
+            reply: event.target.value,
+          });
+          //console.log("firebase user id is: " + commentInfo.firebaseUserId);
+          setReplyCharacterCount(event.target.value.length);
+        }
+      };
+
+      //submit reply
+      const handleReplyFormSubmit = (event) => {
+        event.preventDefault();
+
+        const replyData = async () => {
+          const res = await fetch("/api/replys", {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(replyInfo),
+          });
+          const data = await res.json();
+          console.log(data);
+        };
+        replyData();
+
+        // clear form value
+        setReplyInfo({
+          commentCreatedAt: "",
+          reply: "",
+          //firebaseUserId: "",
+        });
+        setReplyCharacterCount(0);
+        setReplySubmitted(true);
+      };
+
+      const showReply = (event) => {
+        event.preventDefault();
+        if (display === "none") {
+          setDisplay("inline");
+          setReplyButton("CANCEL");
+        } else {
+          setDisplay("none");
+          setReplyButton("Reply");
+        }
+      };
+
       return (
-        <div>
+        <div key={comment.createdAt}>
           {comment.postCreatedAt === post.createdAt.toString() ? (
             <>
               <h2>{comment.comment}</h2>
@@ -145,6 +208,31 @@ function Home() {
                 Comment made on {Date(comment.createdAt).toString()} by{" "}
                 {comment.username}
               </h5>
+              <form onSubmit={showReply}>
+                <button className="btn col-12 " type="submit">
+                  {replyButton}
+                </button>
+              </form>
+              <form onSubmit={handleReplyFormSubmit} style={style.replyForm}>
+                <p
+                  className={`m-0 ${
+                    replyCharacterCount === 280 ? "text-error" : ""
+                  }`}
+                >
+                  Character Count: {replyCharacterCount}/280
+                </p>
+                <textarea
+                  placeholder="Reply..."
+                  name="reply"
+                  value={replyInfo.reply}
+                  className="form-input col-12 "
+                  onChange={handleReplyChange}
+                ></textarea>
+                <button className="btn col-12 " type="submit">
+                  Submit
+                </button>
+              </form>
+              {/* elements for replys here */}
             </>
           ) : (
             <></>
@@ -203,6 +291,9 @@ function Home() {
     },
     container: {
       textAlign: "center",
+    },
+    replyForm: {
+      display: `${display}`,
     },
   };
 

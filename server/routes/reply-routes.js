@@ -12,10 +12,10 @@ AWS.config.update(awsConfig);
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 //define table to be working on
-const table = "Comments";
+const table = "Replys";
 
 //create route to get all comments
-router.get("/comments", (req, res) => {
+router.get("/replys", (req, res) => {
   const params = {
     TableName: table,
   };
@@ -30,22 +30,22 @@ router.get("/comments", (req, res) => {
 });
 
 // get all posts by postCreatedAt
-router.get("/comments/:postCreatedAt", (req, res) => {
+router.get("/replys/:commentCreatedAt", (req, res) => {
   console.log(
-    `Querying for comment information from ${req.params.postCreatedAt}.`
+    `Querying for comment information from ${req.params.commentCreatedAt}.`
   );
   const params = {
     TableName: table,
-    ProjectionExpression: "#pca, #un, #cm, #ca",
-    KeyConditionExpression: "#pca = :postCreatedAt",
+    ProjectionExpression: "#pca, #un, #rp, #ca",
+    KeyConditionExpression: "#pca = :commentCreatedAt",
     ExpressionAttributeNames: {
-      "#pca": "postCreatedAt",
+      "#pca": "commentCreatedAt",
       "#un": "username",
-      "#cm": "comment",
+      "#rp": "reply",
       "#ca": "createdAt",
     },
     ExpressionAttributeValues: {
-      ":postCreatedAt": req.params.postCreatedAt,
+      ":commentCreatedAt": req.params.commentCreatedAt,
     },
     ScanIndexForward: false, // false makes the order descending(true is default)
   };
@@ -61,14 +61,14 @@ router.get("/comments/:postCreatedAt", (req, res) => {
 });
 
 // Create new comment
-router.post("/comments", (req, res) => {
+router.post("/replys", (req, res) => {
   const params = {
     TableName: table,
     Item: {
-      postCreatedAt: req.body.postCreatedAt,
+      commentCreatedAt: req.body.commentCreatedAt,
       username: req.body.username,
-      comment: req.body.comment,
-      //firebaseUserIdd: req.body.firebaseUserId,
+      reply: req.body.reply,
+      //firebaseUid: req.body.firebaseUid,
       createdAt: Date.now(),
     },
   };

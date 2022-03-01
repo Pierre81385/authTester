@@ -1,6 +1,6 @@
 # authTester
 
-A basic framework for user login and profile creation.
+A basic framework for user login and profile creation.  Or that was the original intent, but after getting comfortable with DynamoDB, it's becoming more of an Instagram clone :-)
 
 # OUTINE
 
@@ -17,3 +17,10 @@ A basic framework for user login and profile creation.
 - Integrate Stripe payment
 - Integrate Facebook login via Firebase
 - Try out AWS Rekognition!
+- Implement "likes"
+
+# REPLY
+
+- A table called REPLYS in DynamoDB will store replys, with key value being the createdAt number of the comment, called commentCreatedAt, it replys to...
+- A button called REPLY will unhide a comment/reply input form
+- ALL reply's will be retrieved and displayed on each comment by matching the commentCreatedAt number in the reply document with the comment createdAt number.
