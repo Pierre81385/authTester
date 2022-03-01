@@ -18,8 +18,9 @@ function Home() {
   const [comments, setComments] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [replySubmitted, setReplySubmitted] = useState(false);
-  const [display, setDisplay] = useState("none");
-  const [replyButton, setReplyButton] = useState("Reply");
+  const [displayReply, setDisplayReply] = useState("none");
+  const [buttonDisplay, setButtonDisplay] = useState("inline")
+  const [replyComment, setReplyComment] = useState("")
   const [commentInfo, setCommentInfo] = useState({
     postCreatedAt: "",
     comment: "",
@@ -147,60 +148,22 @@ function Home() {
     };
 
     const renderComments = (comment) => {
-      //set replyInfo state in preparation for submit
-      const handleReplyChange = (event) => {
-        if (event.target.value.length <= 280) {
-          setReplyInfo({
-            username: name,
-            commentCreatedAt: comment.createdAt.toString(),
-            reply: event.target.value,
-          });
-          //console.log("firebase user id is: " + commentInfo.firebaseUserId);
-          setReplyCharacterCount(event.target.value.length);
-        }
-      };
-
-      //submit reply
-      const handleReplyFormSubmit = (event) => {
-        event.preventDefault();
-
-        const replyData = async () => {
-          const res = await fetch("/api/replys", {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(replyInfo),
-          });
-          const data = await res.json();
-          console.log(data);
-        };
-        replyData();
-
-        // clear form value
-        setReplyInfo({
-          commentCreatedAt: "",
-          reply: "",
-          //firebaseUserId: "",
-        });
-        setReplyCharacterCount(0);
-        setReplySubmitted(true);
-      };
 
       const showReply = (event) => {
         event.preventDefault();
-        if (display === "none") {
-          setDisplay("inline");
-          setReplyButton("CANCEL");
+        setReplyComment(comment.createdAt);
+
+        if (displayReply === "none") {
+          setDisplayReply("inline");
+          setButtonDisplay("none")
         } else {
-          setDisplay("none");
-          setReplyButton("Reply");
+          setDisplayReply("none");
+          setButtonDisplay("inline")
         }
       };
 
       return (
-        <div key={comment.createdAt}>
+        <div id="commentDiv" key={comment.createdAt}>
           {comment.postCreatedAt === post.createdAt.toString() ? (
             <>
               <h2>{comment.comment}</h2>
@@ -208,28 +171,9 @@ function Home() {
                 Comment made on {Date(comment.createdAt).toString()} by{" "}
                 {comment.username}
               </h5>
-              <form onSubmit={showReply}>
+              <form onSubmit={showReply} style={style.replyButton}>
                 <button className="btn col-12 " type="submit">
-                  {replyButton}
-                </button>
-              </form>
-              <form onSubmit={handleReplyFormSubmit} style={style.replyForm}>
-                <p
-                  className={`m-0 ${
-                    replyCharacterCount === 280 ? "text-error" : ""
-                  }`}
-                >
-                  Character Count: {replyCharacterCount}/280
-                </p>
-                <textarea
-                  placeholder="Reply..."
-                  name="reply"
-                  value={replyInfo.reply}
-                  className="form-input col-12 "
-                  onChange={handleReplyChange}
-                ></textarea>
-                <button className="btn col-12 " type="submit">
-                  Submit
+                  Reply
                 </button>
               </form>
               {/* elements for replys here */}
@@ -240,6 +184,50 @@ function Home() {
         </div>
       );
     };
+
+          //set replyInfo state in preparation for submit
+          const handleReplyChange = (event) => {
+            // console.log(replyComment)
+            if (event.target.value.length <= 280) {
+              setReplyInfo({
+                username: name,
+                commentCreatedAt: replyComment.toString(),
+                reply: event.target.value,
+              });
+              //console.log("firebase user id is: " + commentInfo.firebaseUserId);
+              setReplyCharacterCount(event.target.value.length);
+            }
+          };
+    
+          //submit reply
+          const handleReplyFormSubmit = (event) => {
+            event.preventDefault();
+    
+            const replyData = async () => {
+              const res = await fetch("/api/replys", {
+                method: "POST",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(replyInfo),
+              });
+              const data = await res.json();
+              console.log(data);
+            };
+            replyData();
+    
+            // clear form value
+            setReplyInfo({
+              commentCreatedAt: "",
+              reply: "",
+              //firebaseUserId: "",
+            });
+            setReplyCharacterCount(0);
+            setReplySubmitted(true);
+            setDisplayReply("none")
+            setButtonDisplay("inline")
+          };
 
     return (
       <div>
@@ -269,6 +257,25 @@ function Home() {
             Submit
           </button>
         </form>
+        <form onSubmit={handleReplyFormSubmit} style={style.replyForm}>
+                <p
+                  className={`m-0 ${
+                    replyCharacterCount === 280 ? "text-error" : ""
+                  }`}
+                >
+                  Character Count: {replyCharacterCount}/280
+                </p>
+                <textarea
+                  placeholder="Reply..."
+                  name="reply"
+                  value={replyInfo.reply}
+                  className="form-input col-12 "
+                  onChange={handleReplyChange}
+                ></textarea>
+                <button className="btn col-12 " type="submit">
+                  Submit
+                </button>
+              </form>
       </div>
     );
   };
@@ -293,8 +300,11 @@ function Home() {
       textAlign: "center",
     },
     replyForm: {
-      display: `${display}`,
+      display: `${displayReply}`,
     },
+    replyButton: {
+      display: `${buttonDisplay}`
+    }
   };
 
   return (

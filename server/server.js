@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 3001;
 const imageRoutes = require("./routes/image-upload");
 const postRoutes = require("./routes/post-routes");
 const commentRoutes = require("./routes/comment-routes");
+const replyRoutes = require("./routes/reply-routes");
 
 // express middleware, used to be bodyparser
 app.use(express.json());
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === "production") {
 app.use("/api/", imageRoutes);
 app.use("/api/", postRoutes);
 app.use("/api", commentRoutes);
+app.use("/api", replyRoutes);
 
 // Start the API server
 app.listen(PORT, () =>
