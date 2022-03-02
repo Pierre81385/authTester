@@ -61,6 +61,7 @@ router.get("/posts/:username", (req, res) => {
   });
 });
 
+
 // Create new post
 router.post("/posts", (req, res) => {
   const params = {

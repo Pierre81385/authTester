@@ -1,105 +1,54 @@
+//get all posts by username and display here
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useHistory, useParams } from "react-router-dom";
 import { auth, db, logout } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { Container, Form, Card, Row } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
 
-function Home() {
-  //user states
+function OnePost() {
+  const { createdAt: userParam } = useParams();
   const [user, loading, error] = useAuthState(auth);
-  const [name, setName] = useState("");
+  const [posts, setPosts] = useState([
+    {
+      username: "",
+      image: "",
+      title: "",
+      description: "",
+      createdAt: userParam,
+      email: "",
+    },
+  ]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [profileImage, setProfileImage] = useState("");
-
-  //comment states
-  const [characterCount, setCharacterCount] = useState(0);
-  const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [comments, setComments] = useState([]);
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [displayComment, setDisplayComment] = useState("none");
-  const [commentButtonDisplay, setCommentButtonDisplay] = useState("inline");
+  const [characterCount, setCharacterCount] = useState(0);
+  const [replyCharacterCount, setReplyCharacterCount] = useState(0);
+  const [name, setName] = useState("");
   const [commentInfo, setCommentInfo] = useState({
     postCreatedAt: "",
     comment: "",
-    //firebaseUserId: "",
+    firebaseUserId: "",
   });
-
-  //reply states
-  const [replys, setReplys] = useState([]);
-  const [replyCharacterCount, setReplyCharacterCount] = useState(0);
   const [replysLoaded, setReplysLoaded] = useState(false);
   const [replysSubmitted, setReplysSubmitted] = useState(false);
+  const [displayComment, setDisplayComment] = useState("none");
+  const [commentButtonDisplay, setCommentButtonDisplay] = useState("inline");
   const [displayReply, setDisplayReply] = useState("none");
+  const [buttonDisplay, setButtonDisplay] = useState("inline");
   const [replyComment, setReplyComment] = useState("");
+  const [replys, setReplys] = useState([]);
   const [replyInfo, setReplyInfo] = useState({
     commentCreatedAt: "",
     reply: "",
   });
 
-  //post states
-  const [posts, setPosts] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [buttonDisplay, setButtonDisplay] = useState("inline");
-  const [details, showDetails] = useState("none");
-
   const history = useHistory();
 
-  const style = {
-    img: {
-      marginTop: "30px",
-      width: "300px",
-      display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-    profile: {
-      marginTop: "30px",
-      width: "300px",
-      display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
-      borderRadius: "50%",
-    },
-    container: {
-      display: "flex",
-      justifyContent: "center",
-    },
-    card: {
-      width: `350px`,
-      heigh: "500px",
-      marginRight: "auto",
-      marginLeft: "auto",
-      padding: "10px",
-      borderRadius: "2%",
-    },
-    button: {
-      marginTop: "5px",
-      marginBottom: "2px",
-    },
-    row: {
-      height: "25vh",
-    },
-    replyForm: {
-      display: `${displayReply}`,
-    },
-    replyButton: {
-      display: `${buttonDisplay}`,
-    },
-    showCommentForm: {
-      display: `${displayComment}`,
-    },
-    commentButton: {
-      display: `${commentButtonDisplay}`,
-    },
-    postDetaails: {
-      display: `${details}`,
-    },
-  };
-
-  //query Firebase Firestore USERS table for user name and image data.  Update name and profileImage state with data.
-  const fetchUserName = async () => {
+  const fetchUser = async () => {
     try {
       const q = query(collection(db, "users"), where("uid", "==", user?.uid));
       const doc = await getDocs(q);
@@ -112,7 +61,6 @@ function Home() {
     }
   };
 
-  //query DynamoDB POSTS table for all posts.  Update posts state with data.
   useEffect(() => {
     console.log("getting posts");
     const fetchData = async () => {
@@ -130,8 +78,11 @@ function Home() {
       }
     };
     fetchData();
-  }, []);
+  }, [userParam]);
 
+  useEffect(() => {
+    fetchUser();
+  });
   //query DynamoDB COMMENTS table for all comments.  Update comments state with data.  Reupdate if submitted state is true.
   useEffect(() => {
     console.log("getting comments");
@@ -145,7 +96,7 @@ function Home() {
         );
         setComments([...data]);
         setCommentsLoaded(true);
-        console.log("the comments loaded" + comments);
+        console.log(comments);
       } catch (error) {
         console.log(error);
       }
@@ -186,16 +137,11 @@ function Home() {
     }
   }, [replysSubmitted]);
 
-  //on render, check login status and redirect if not logged in, or load user information via fetchUserName()
-  useEffect(() => {
-    console.log("checking login status");
-    if (loading) return;
-    if (!user) return history.replace("/login");
-    fetchUserName();
-  }, [user, loading]);
+  ////////////
 
-  //render posts mapped from posts state array
   const renderPosts = (post) => {
+    var d = Date(post.createdAt).toString();
+
     //set commentInfo state in preparation for submit
     const handleChange = (event) => {
       if (event.target.value.length <= 280) {
@@ -203,9 +149,8 @@ function Home() {
           username: name,
           postCreatedAt: post.createdAt.toString(),
           comment: event.target.value,
-          //firebaseUserId: post.firebaseUid,
+          firebaseUserId: post.firebaseUid,
         });
-        //console.log("firebase user id is: " + commentInfo.firebaseUserId);
         setCharacterCount(event.target.value.length);
       }
     };
@@ -232,7 +177,7 @@ function Home() {
       setCommentInfo({
         postCreatedAt: "",
         comment: "",
-        //firebaseUserId: "",
+        firebaseUserId: "",
       });
       setCharacterCount(0);
       setSubmitted(true);
@@ -271,7 +216,7 @@ function Home() {
       };
 
       return (
-        <div key={comment.createdAt}>
+        <div>
           {comment.postCreatedAt === post.createdAt.toString() ? (
             <>
               <h2>{comment.comment}</h2>
@@ -348,34 +293,20 @@ function Home() {
       }
     };
 
-    var s = post.createdAt.toString()
-
     return (
-      <Card style={style.card}>
-        <Card.Img
-          src={post.image}
-          style={style.img}
-          onClick={() => {
-            history.push(`/singlepost/${s}`);
-            // if (details === "none") {
-            //   showDetails("inline");
-            // } else {
-            //   showDetails("none");
-            // }
-          }}
-        ></Card.Img>
-        {/* <div style={style.postDetaails}>
-          <Card.Title>{post.title}</Card.Title>
-          <Link
-            variant="dark"
-            class="btn btn-dark"
-            style={style.button}
-            to={`/profile/${post.username}`}
-          >
-            By {post.username}
-          </Link>
-          <Card.Text>{post.description}</Card.Text>
-          <Card.Footer>
+      <div>
+        {post.createdAt === Number(userParam) ? (
+          <>
+            <img src={post.image} style={style.img}></img>
+            <h1>{post.title}</h1>
+            <Link
+              to={`/profile/${post.username}`}
+              style={{ fontWeight: 700 }}
+              className="text-light"
+            >
+              By {post.username}
+            </Link>
+            <h4>{post.description}</h4>
             <div>{comments.map(renderComments)}</div>
             <form>
               <button
@@ -445,48 +376,61 @@ function Home() {
                 Cancel
               </button>
             </form>
-          </Card.Footer>
-        </div> */}
-      </Card>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
     );
   };
 
-  return (
-    <Container style={style.container}>
-      <Row style={style.row}>
-        <Card style={style.card}>
-          <Card.Img variant="top" src={profileImage} style={style.profile} />
-          <Card.Body>
-            <Card.Title>{name}</Card.Title>
-            <Card.Text>{user?.email}</Card.Text>
-          </Card.Body>
+  const style = {
+    img: {
+      marginTop: "30px",
+      width: "300px",
+      display: "block",
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+    profile: {
+      marginTop: "30px",
+      width: "300px",
+      display: "block",
+      marginLeft: "auto",
+      marginRight: "auto",
+      borderRadius: "50%",
+    },
+    container: {
+      textAlign: "center",
+    },
+    replyForm: {
+      display: `${displayReply}`,
+    },
+    replyButton: {
+      display: `${buttonDisplay}`,
+    },
+    showCommentForm: {
+      display: `${displayComment}`,
+    },
+    commentButton: {
+      display: `${commentButtonDisplay}`,
+    },
+  };
 
-          <Button
-            variant="dark"
-            style={style.button}
-            onClick={() => {
-              history.replace("/post");
-            }}
-          >
-            New Post
-          </Button>
-          <Link
-            variant="dark"
-            class="btn btn-dark"
-            style={style.button}
-            to={`/profile/${name}`}
-          >
-            My Profile
-          </Link>
-          <Button variant="dark" style={style.button} onClick={logout}>
-            Logout
-          </Button>
-        </Card>
-      </Row>
-      <Row>
-        <div>{posts.map(renderPosts)}</div>
-      </Row>
-    </Container>
+  //add image upload option where submit button creates the user profile document
+
+  return (
+    <div style={style.container}>
+      <img src={profileImage} style={style.profile} />
+      <h1>Viewing {userParam ? `${userParam}'s` : "your"} posts.</h1>
+      <Link to="/post">New Post</Link>
+      <Link to={`/profile/${name}`}>My Profile</Link>
+      <button className="dashboard__btn" onClick={logout}>
+        Logout
+      </button>
+      <div>{posts.map(renderPosts)}</div>
+    </div>
   );
 }
-export default Home;
+
+export default OnePost;

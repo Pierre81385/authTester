@@ -7,6 +7,7 @@ import Post from "./pages/Post";
 import Register from "./pages/Register";
 import Reset from "./pages/Reset";
 import Profile from "./pages/Profile";
+import OnePost from "./pages/singlePost";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route exact path="/login" component={Login} />
           <Route exact path="/post" component={Post} />
           <Route exact path="/profile/:username" component={Profile} />
+          <Route exact path="/singlepost/:createdAt" component={OnePost} />
         </Switch>
       </div>
     </Router>
