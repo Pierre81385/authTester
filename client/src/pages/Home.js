@@ -291,11 +291,7 @@ function Home() {
       <div>
         <img src={post.image} style={style.img}></img>
         <h1>{post.title}</h1>
-        <Link
-          to={`/profile/${post.username}`}
-          style={{ fontWeight: 700 }}
-          className="text-light"
-        >
+        <Link to={`/profile/${post.username}`} style={{ fontWeight: 700 }}>
           By {post.username}
         </Link>
         <h4>{post.description}</h4>
