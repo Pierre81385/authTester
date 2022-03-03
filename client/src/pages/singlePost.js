@@ -45,6 +45,7 @@ function OnePost() {
     commentCreatedAt: "",
     reply: "",
   });
+  const [details, showDetails] = useState("none");
 
   const history = useHistory();
 
@@ -297,85 +298,93 @@ function OnePost() {
       <div>
         {post.createdAt === Number(userParam) ? (
           <>
-            <img src={post.image} style={style.img}></img>
+            <img
+              src={post.image}
+              style={style.img}
+              onClick={() => {
+                if (details === "none") {
+                  showDetails("inline");
+                } else {
+                  showDetails("none");
+                }
+              }}
+            ></img>
             <h1>{post.title}</h1>
-            <Link
-              to={`/profile/${post.username}`}
-              style={{ fontWeight: 700 }}
-              className="text-light"
-            >
-              By {post.username}
-            </Link>
+            <Link to={`/profile/${post.username}`}>By {post.username}</Link>
             <h4>{post.description}</h4>
-            <div>{comments.map(renderComments)}</div>
-            <form>
-              <button
-                className="btn col-12 "
-                type="submit"
-                onClick={showComment}
-                style={style.commentButton}
-              >
-                Comment
-              </button>
-            </form>
-            <form onSubmit={handleFormSubmit} style={style.showCommentForm}>
-              <p
-                className={`m-0 ${characterCount === 280 ? "text-error" : ""}`}
-              >
-                Character Count: {characterCount}/280
-              </p>
-              <textarea
-                placeholder="Comment..."
-                name="comment"
-                value={commentInfo.comment}
-                className="form-input col-12 "
-                onChange={handleChange}
-              ></textarea>
-              <button className="btn col-12 " type="submit">
-                Submit
-              </button>
-              <button
-                className="btn col-12 "
-                type="submit"
-                style={style.showCommentForm}
-                onClick={() => {
-                  setCommentButtonDisplay("inline");
-                  setDisplayComment("none");
-                }}
-              >
-                Cancel
-              </button>
-            </form>
-            <form onSubmit={handleReplyFormSubmit} style={style.replyForm}>
-              <p
-                className={`m-0 ${
-                  replyCharacterCount === 280 ? "text-error" : ""
-                }`}
-              >
-                Character Count: {replyCharacterCount}/280
-              </p>
-              <textarea
-                placeholder="Reply..."
-                name="reply"
-                value={replyInfo.reply}
-                className="form-input col-12 "
-                onChange={handleReplyChange}
-              ></textarea>
-              <button className="btn col-12 " type="submit">
-                Submit
-              </button>
-              <button
-                className="btn col-12 "
-                type="submit"
-                style={style.replyForm}
-                onClick={() => {
-                  setButtonDisplay("inline");
-                  setDisplayReply("none");
-                }}
-              >
-                Cancel
-              </button>
-            </form>
+            <div style={style.postDetaails}>
+              <div>{comments.map(renderComments)}</div>
+              <form>
+                <button
+                  className="btn col-12 "
+                  type="submit"
+                  onClick={showComment}
+                  style={style.commentButton}
+                >
+                  Comment
+                </button>
+              </form>
+              <form onSubmit={handleFormSubmit} style={style.showCommentForm}>
+                <p
+                  className={`m-0 ${
+                    characterCount === 280 ? "text-error" : ""
+                  }`}
+                >
+                  Character Count: {characterCount}/280
+                </p>
+                <textarea
+                  placeholder="Comment..."
+                  name="comment"
+                  value={commentInfo.comment}
+                  className="form-input col-12 "
+                  onChange={handleChange}
+                ></textarea>
+                <button className="btn col-12 " type="submit">
+                  Submit
+                </button>
+                <button
+                  className="btn col-12 "
+                  type="submit"
+                  style={style.showCommentForm}
+                  onClick={() => {
+                    setCommentButtonDisplay("inline");
+                    setDisplayComment("none");
+                  }}
+                >
+                  Cancel
+                </button>
+              </form>
+              <form onSubmit={handleReplyFormSubmit} style={style.replyForm}>
+                <p
+                  className={`m-0 ${
+                    replyCharacterCount === 280 ? "text-error" : ""
+                  }`}
+                >
+                  Character Count: {replyCharacterCount}/280
+                </p>
+                <textarea
+                  placeholder="Reply..."
+                  name="reply"
+                  value={replyInfo.reply}
+                  className="form-input col-12 "
+                  onChange={handleReplyChange}
+                ></textarea>
+                <button className="btn col-12 " type="submit">
+                  Submit
+                </button>
+                <button
+                  className="btn col-12 "
+                  type="submit"
+                  style={style.replyForm}
+                  onClick={() => {
+                    setButtonDisplay("inline");
+                    setDisplayReply("none");
+                  }}
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
           </>
         ) : (
           <></>
@@ -415,14 +424,17 @@ function OnePost() {
     commentButton: {
       display: `${commentButtonDisplay}`,
     },
+    postDetaails: {
+      display: `${details}`,
+    },
   };
 
   //add image upload option where submit button creates the user profile document
 
   return (
     <div style={style.container}>
-      <img src={profileImage} style={style.profile} />
-      <h1>Viewing {userParam ? `${userParam}'s` : "your"} posts.</h1>
+      {/* <img src={profileImage} style={style.profile} />
+      <h1>Viewing {userParam ? `${userParam}'s` : "your"} posts.</h1> */}
       <Link to="/post">New Post</Link>
       <Link to={`/profile/${name}`}>My Profile</Link>
       <button className="dashboard__btn" onClick={logout}>
