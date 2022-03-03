@@ -6,6 +6,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db, logout } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import { Container, Card } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import { sendSignInLinkToEmail } from "firebase/auth";
 
 function OnePost() {
   const { createdAt: userParam } = useParams();
@@ -46,8 +49,64 @@ function OnePost() {
     reply: "",
   });
   const [details, showDetails] = useState("none");
+  const [email, setEmail] = useState("");
 
   const history = useHistory();
+
+  const style = {
+    img: {
+      marginTop: "30px",
+      width: "300px",
+      display: "block",
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+    profile: {
+      marginTop: "30px",
+      width: "300px",
+      display: "block",
+      marginLeft: "auto",
+      marginRight: "auto",
+      borderRadius: "50%",
+    },
+    card: {
+      width: `350px`,
+      heigh: "500px",
+      marginRight: "auto",
+      marginLeft: "auto",
+      padding: "10px",
+      borderRadius: "2%",
+      borderColor: "rgba(0,0,0,0)",
+    },
+    postCard: {
+      margin: "10px",
+    },
+    button: {
+      marginTop: "5px",
+      marginBottom: "2px",
+    },
+    container: {
+      textAlign: "center",
+    },
+    replyForm: {
+      display: `${displayReply}`,
+    },
+    replyButton: {
+      display: `${buttonDisplay}`,
+    },
+    showCommentForm: {
+      display: `${displayComment}`,
+    },
+    commentButton: {
+      display: `${commentButtonDisplay}`,
+    },
+    postDetaails: {
+      display: `${details}`,
+    },
+    link: {
+      color: "black"
+    }
+  };
 
   const fetchUser = async () => {
     try {
@@ -55,6 +114,7 @@ function OnePost() {
       const doc = await getDocs(q);
       const data = doc.docs[0].data();
       setName(data.name);
+      setEmail(data.email);
       setProfileImage(data.image);
     } catch (err) {
       console.error(err);
@@ -294,66 +354,79 @@ function OnePost() {
       }
     };
 
+    //POST RENDER
+
     return (
       <div>
         {post.createdAt === Number(userParam) ? (
           <>
-            <img
-              src={post.image}
-              style={style.img}
-              onClick={() => {
-                if (details === "none") {
-                  showDetails("inline");
-                } else {
-                  showDetails("none");
-                }
-              }}
-            ></img>
-            <h1>{post.title}</h1>
-            <Link to={`/profile/${post.username}`}>By {post.username}</Link>
-            <h4>{post.description}</h4>
+            <div class="card text-center" style={style.postCard}>
+              <div class="card-header">{post.title}</div>
+              <div class="card-body">
+                <img
+                  src={post.image}
+                  style={style.img}
+                  onClick={() => {
+                    if (details === "none") {
+                      showDetails("inline");
+                    } else {
+                      showDetails("none");
+                    }
+                  }}
+                ></img>
+                <h5 class="card-title">
+                  <Link to={`/profile/${post.username}`} style={style.link}>
+                    By {post.username}
+                  </Link>
+                </h5>
+                <p class="card-text">{post.description}</p>
+              </div>
+              <div class="card-footer">
+                {" "}
+                <form>
+                  <Button
+                    variant="dark"
+                    type="submit"
+                    onClick={showComment}
+                    style={style.commentButton}
+                  >
+                    Comment
+                  </Button>
+                </form>
+              </div>
+            </div>
+
+            <form onSubmit={handleFormSubmit} style={style.showCommentForm}>
+              <p
+                className={`m-0 ${characterCount === 280 ? "text-error" : ""}`}
+              >
+                Character Count: {characterCount}/280
+              </p>
+              <textarea
+                placeholder="Comment..."
+                name="comment"
+                value={commentInfo.comment}
+                className="form-input col-12 "
+                onChange={handleChange}
+              ></textarea>
+              <button className="btn col-12 " type="submit">
+                Submit
+              </button>
+              <button
+                className="btn col-12 "
+                type="submit"
+                style={style.showCommentForm}
+                onClick={() => {
+                  setCommentButtonDisplay("inline");
+                  setDisplayComment("none");
+                }}
+              >
+                Cancel
+              </button>
+            </form>
             <div style={style.postDetaails}>
               <div>{comments.map(renderComments)}</div>
-              <form>
-                <button
-                  className="btn col-12 "
-                  type="submit"
-                  onClick={showComment}
-                  style={style.commentButton}
-                >
-                  Comment
-                </button>
-              </form>
-              <form onSubmit={handleFormSubmit} style={style.showCommentForm}>
-                <p
-                  className={`m-0 ${
-                    characterCount === 280 ? "text-error" : ""
-                  }`}
-                >
-                  Character Count: {characterCount}/280
-                </p>
-                <textarea
-                  placeholder="Comment..."
-                  name="comment"
-                  value={commentInfo.comment}
-                  className="form-input col-12 "
-                  onChange={handleChange}
-                ></textarea>
-                <button className="btn col-12 " type="submit">
-                  Submit
-                </button>
-                <button
-                  className="btn col-12 "
-                  type="submit"
-                  style={style.showCommentForm}
-                  onClick={() => {
-                    setCommentButtonDisplay("inline");
-                    setDisplayComment("none");
-                  }}
-                >
-                  Cancel
-                </button>
-              </form>
+
               <form onSubmit={handleReplyFormSubmit} style={style.replyForm}>
                 <p
                   className={`m-0 ${
@@ -393,53 +466,40 @@ function OnePost() {
     );
   };
 
-  const style = {
-    img: {
-      marginTop: "30px",
-      width: "300px",
-      display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-    profile: {
-      marginTop: "30px",
-      width: "300px",
-      display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
-      borderRadius: "50%",
-    },
-    container: {
-      textAlign: "center",
-    },
-    replyForm: {
-      display: `${displayReply}`,
-    },
-    replyButton: {
-      display: `${buttonDisplay}`,
-    },
-    showCommentForm: {
-      display: `${displayComment}`,
-    },
-    commentButton: {
-      display: `${commentButtonDisplay}`,
-    },
-    postDetaails: {
-      display: `${details}`,
-    },
-  };
-
   //add image upload option where submit button creates the user profile document
 
   return (
-    <div style={style.container}>
-      {/* <img src={profileImage} style={style.profile} />
-      <h1>Viewing {userParam ? `${userParam}'s` : "your"} posts.</h1> */}
-      <Link to="/post">New Post</Link>
-      <Link to={`/profile/${name}`}>My Profile</Link>
-      <button className="dashboard__btn" onClick={logout}>
-        Logout
-      </button>
+    <div>
+      <Container>
+        <Card style={style.card}>
+          <Card.Img variant="top" src={profileImage} style={style.profile} />
+          <Card.Body>
+            <Card.Title>{name}</Card.Title>
+            <Card.Text>{email}</Card.Text>
+          </Card.Body>
+
+          <Button
+            variant="dark"
+            style={style.button}
+            onClick={() => {
+              history.replace("/post");
+            }}
+          >
+            New Post
+          </Button>
+          <Link
+            variant="dark"
+            class="btn btn-dark"
+            style={style.button}
+            to={`/`}
+          >
+            Home
+          </Link>
+          <Button variant="dark" style={style.button} onClick={logout}>
+            Logout
+          </Button>
+        </Card>
+      </Container>
       <div>{posts.map(renderPosts)}</div>
     </div>
   );

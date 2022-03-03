@@ -17,11 +17,9 @@ function Home() {
   const [posts, setPosts] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-
   const history = useHistory();
 
   const style = {
-    
     profile: {
       marginTop: "30px",
       width: "300px",
@@ -41,6 +39,7 @@ function Home() {
       marginLeft: "auto",
       padding: "10px",
       borderRadius: "2%",
+      borderColor: "rgba(0,0,0,0)",
     },
     button: {
       marginTop: "5px",
@@ -108,7 +107,6 @@ function Home() {
 
   //render posts mapped from posts state array
   const renderPosts = (post) => {
-
     var s = post.createdAt.toString();
 
     return (
@@ -120,7 +118,6 @@ function Home() {
             history.push(`/singlepost/${s}`);
           }}
         ></img>
- 
       </li>
     );
   };

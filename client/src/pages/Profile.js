@@ -49,6 +49,7 @@ function Profile() {
       marginLeft: "auto",
       padding: "10px",
       borderRadius: "2%",
+      borderColor: "rgba(0,0,0,0)",
     },
     button: {
       marginTop: "5px",
