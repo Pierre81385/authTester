@@ -10,6 +10,8 @@ import Profile from "./pages/Profile";
 import OnePost from "./pages/singlePost";
 
 function App() {
+  const style = {};
+
   return (
     <Router>
       <div className="container">

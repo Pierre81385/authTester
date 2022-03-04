@@ -56,7 +56,7 @@ function OnePost() {
   const style = {
     img: {
       marginTop: "30px",
-      width: "300px",
+      height: "75vh",
       display: "block",
       marginLeft: "auto",
       marginRight: "auto",
@@ -104,8 +104,16 @@ function OnePost() {
       display: `${details}`,
     },
     link: {
-      color: "black"
-    }
+      color: "black",
+    },
+    commentCard: {
+      width: "50%",
+      margin: "15px",
+    },
+    replyCard: {
+      width: "75%",
+      margin: "15px",
+    },
   };
 
   const fetchUser = async () => {
@@ -263,11 +271,13 @@ function OnePost() {
           <div>
             {reply.commentCreatedAt === comment.createdAt.toString() ? (
               <>
-                <h2>{reply.reply}</h2>
-                <h5>
-                  Reply made on {Date(reply.createdAt).toString()} by{" "}
-                  {reply.username}
-                </h5>
+                <Card style={style.replyCard}>
+                  <Card.Title>
+                    Reply made on {Date(reply.createdAt).toString()} by{" "}
+                    {reply.username}
+                  </Card.Title>
+                  <Card.Body>{reply.reply}</Card.Body>
+                </Card>
               </>
             ) : (
               <></>
@@ -280,17 +290,20 @@ function OnePost() {
         <div>
           {comment.postCreatedAt === post.createdAt.toString() ? (
             <>
-              <h2>{comment.comment}</h2>
-              <h5>
-                Comment made on {Date(comment.createdAt).toString()} by{" "}
-                {comment.username}
-              </h5>
-              <div>{replys.map(renderReplys)}</div>
-              <form onSubmit={showReply} style={style.replyButton}>
-                <button className="btn col-12 " type="submit">
-                  Reply
-                </button>
-              </form>{" "}
+              <Card style={style.commentCard}>
+                <Card.Title>
+                  {" "}
+                  Comment made on {Date(comment.createdAt).toString()} by{" "}
+                  {comment.username}
+                </Card.Title>
+                <Card.Body>{comment.comment}</Card.Body>
+                <div>{replys.map(renderReplys)}</div>
+                <form onSubmit={showReply} style={style.replyButton}>
+                  <Button variant="dark" type="submit">
+                    Reply
+                  </Button>
+                </form>
+              </Card>
             </>
           ) : (
             <></>

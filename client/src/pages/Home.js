@@ -58,8 +58,10 @@ function Home() {
     img: {
       maxHeight: "100%",
       minWidth: "100%",
+      // height: "20vh",
+      // width: "20vw",
       objectFit: "cover",
-      verticalAlign: "bottom",
+      verticalAlign: "top",
     },
   };
 

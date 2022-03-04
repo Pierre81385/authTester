@@ -1,4 +1,4 @@
-//Notes: 
+//Notes:
 //This page is for creating user posts and accepts input for an IMAGE, post TITLE, and post DESCRIPTION.
 //Every post records username, createdAt, description, user email, user's firebase uid, image location (images are stored in an S3 bucket), and title.
 
@@ -7,9 +7,11 @@ import { query, collection, getDocs, where } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { Card, Form, Container } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 
 const Post = () => {
-
   const history = useHistory();
 
   const [user, loading, error] = useAuthState(auth);
@@ -38,6 +40,37 @@ const Post = () => {
       console.error(err);
       alert("An error occured while fetching user data");
     }
+  };
+
+  const style = {
+    img: {
+      marginTop: "30px",
+      height: "33vh",
+      display: "block",
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+    card: {
+      width: `350px`,
+      marginRight: "auto",
+      marginLeft: "auto",
+      padding: "10px",
+      borderRadius: "2%",
+    },
+    container: {
+      textAlign: "center",
+    },
+    postCard: {
+      margin: "10px",
+    },
+    button: {
+      width: "100%",
+      marginTop: "5px",
+      marginBottom: "5px",
+    },
+    link: {
+      color: "black",
+    },
   };
 
   useEffect(() => {
@@ -110,38 +143,41 @@ const Post = () => {
       description: "",
     });
     setCharacterCount(0);
+    history.replace("/");
   };
 
-  const style = {
-    img: {
-      marginTop: "30px",
-      width: "300px",
-      display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-    container: {
-      textAlign: "center",
-    },
-  };
-  
   return (
     <main>
       <div style={style.container}>
-        <img src={postInfo.image} style={style.img}></img>
-        <h2>{postInfo.title}</h2>
-        <h4>{postInfo.description}</h4>
-        <div className="col-12 mb-3">
-          <label className="form-input col-12  p-1">
-            Add an image to your profile:
-          </label>
-          <input type="file" ref={fileInput} className="form-input p-2" />
-
-          <button className="btn" onClick={handleImageUpload} type="submit">
-            UPLOAD
-          </button>
-
+        <div class="card text-center" style={style.postCard}>
+          <div class="card-header">{postInfo.title}</div>
+          <div class="card-body">
+            <img src={postInfo.image} style={style.img}></img>
+            <Link to={`#`} style={style.link}>
+              By {postInfo.username}
+            </Link>
+            <p class="card-text">{postInfo.description}</p>
+          </div>
+        </div>
+      </div>
+      <Container style={style.container}>
+        <Card style={style.card}>
           <form onSubmit={handleFormSubmit}>
+            <label className="form-input col-12  p-1">
+              Add an image to your profile:
+            </label>
+
+            <input type="file" ref={fileInput} className="form-input p-2" />
+
+            <Button
+              variant="dark"
+              onClick={handleImageUpload}
+              type="submit"
+              style={style.button}
+            >
+              UPLOAD
+            </Button>
+
             <input
               placeholder="Title"
               name="title"
@@ -160,12 +196,20 @@ const Post = () => {
               className="form-input col-12 "
               onChange={handleChange}
             ></textarea>
-            <button className="btn col-12 " type="submit">
+            <Button variant="dark" type="submit" style={style.button}>
               Submit
-            </button>
+            </Button>
+            <Link
+            variant="dark"
+            class="btn btn-dark"
+            style={style.button}
+            to={`/`}
+          >
+            Cancel
+          </Link>
           </form>
-        </div>
-      </div>
+        </Card>
+      </Container>
     </main>
   );
 };
