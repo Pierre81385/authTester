@@ -8,6 +8,7 @@ import { query, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Container, Card } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
+import { updateCurrentUser } from "firebase/auth";
 
 function OnePost() {
   const { createdAt: userParam } = useParams();
@@ -58,9 +59,13 @@ function OnePost() {
     postCreatedAt: "",
     like: false,
   });
-  const { likeSent, sendLike } = useState(false);
+  const [likes, setLikes] = useState([]);
+  const [likePressed, setLikePressed] = useState(false);
+  const [numberOfLikes, setNumberOfLikes] = useState("");
 
   const history = useHistory();
+
+  var postId = "";
 
   const style = {
     img: {
@@ -182,12 +187,6 @@ function OnePost() {
     fetchUser();
   });
 
-  useEffect(() => {
-    if (likeSent) {
-      console.log("like sent!");
-    }
-  });
-
   //query DynamoDB COMMENTS table for all comments.  Update comments state with data.  Reupdate if submitted state is true.
   useEffect(() => {
     console.log("getting comments");
@@ -250,16 +249,57 @@ function OnePost() {
     }
   });
 
+  useEffect(() => {
+    const fetchLikes = async () => {
+      try {
+        const res = await fetch("/api/likes");
+        const jsonData = await res.json();
+        // sort the array by createdAt property ordered by descending values
+        const data = jsonData.sort((a, b) =>
+          a.createdAt < b.createdAt ? 1 : -1
+        );
+        setLikes([...data]);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchLikes();
+
+    if (likePressed) {
+      fetchLikes();
+    }
+  }, [likePressed]);
+
+  useEffect(() => {
+    const fetchPostLikes = async () => {
+      try {
+        const res = await fetch(`/api/likes/${postId}`);
+        const data = await res.json();
+        setNumberOfLikes(data.length);
+      } catch (error) {
+        console.log(error);
+      }
+
+      console.log("This post has " + numberOfLikes + " likes.");
+    };
+    fetchPostLikes();
+
+    if (likePressed) {
+      fetchPostLikes();
+    }
+  }, [likePressed]);
+
   //////////////////////////////////////
   ////////// - RENDER POSTS - //////////
   //////////////////////////////////////
 
   const renderPosts = (post) => {
-    var d = Date(post.createdAt).toString();
-
     //////////////////////////////////////
     ////////// - RENDER COMMENTS - ///////
     //////////////////////////////////////
+
+    postId = post.createdAt;
 
     //set commentInfo state in preparation for submit
     const handleChange = (event) => {
@@ -437,12 +477,12 @@ function OnePost() {
 
       liked.postCreatedAt = post.createdAt.toString();
       liked.username = name;
-      liked.like = true
+      liked.like = true;
 
       console.log(liked);
 
       const recordLike = async () => {
-        const res = await fetch("/api/likes", {
+        const res = await fetch(`/api/likes/`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -454,8 +494,10 @@ function OnePost() {
         console.log(data);
       };
       recordLike();
+      setLikePressed(true);
     };
 
+   
     //POST HTML
     return (
       <Container>
@@ -471,6 +513,10 @@ function OnePost() {
                   </Link>
                 </h5>
                 <p class="card-text">{post.description}</p>
+              </div>
+              <div>
+                <p>Likes: {numberOfLikes}</p>
+                <p>{likePressed}</p>
               </div>
               <div class="card-footer">
                 <form>
@@ -625,6 +671,7 @@ function OnePost() {
           </Button>
         </Card>
       </Container>
+
       <div className="text-center ">{posts.map(renderPosts)}</div>
     </div>
   );
