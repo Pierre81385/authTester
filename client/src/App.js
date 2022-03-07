@@ -10,11 +10,10 @@ import Profile from "./pages/Profile";
 import OnePost from "./pages/singlePost";
 
 function App() {
-  const style = {};
-
   return (
+   
     <Router>
-      <div className="container">
+      
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/reset" component={Reset} />
@@ -24,8 +23,9 @@ function App() {
           <Route exact path="/profile/:username" component={Profile} />
           <Route exact path="/singlepost/:createdAt" component={OnePost} />
         </Switch>
-      </div>
+      {/* </div> */}
     </Router>
+   
   );
 }
 

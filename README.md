@@ -19,8 +19,11 @@ A basic framework for user login and profile creation.  Or that was the original
 - Try out AWS Rekognition!
 - Implement "likes"
 
-# REPLY
+# TO-DO
 
-- A table called REPLYS in DynamoDB will store replys, with key value being the createdAt number of the comment, called commentCreatedAt, it replys to...
-- A button called REPLY will unhide a comment/reply input form
-- ALL reply's will be retrieved and displayed on each comment by matching the commentCreatedAt number in the reply document with the comment createdAt number.
+- need to add condition so that a post cannot be liked multiple times by the same user
+- need to fix issue where number of likes displayed does not re-render on user press of like button
+
+- update and delete POST
+- delete COMMENT
+- delete REPLY

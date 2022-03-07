@@ -8,6 +8,12 @@ import { query, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Container, Form, Card, Row, Col } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
+import {
+  BsPlusSquare,
+  BsCollection,
+  BsBoxArrowRight,
+  BsEnvelope,
+} from "react-icons/bs";
 
 function Profile() {
   const { username: userParam } = useParams();
@@ -32,7 +38,7 @@ function Profile() {
   const style = {
     profile: {
       marginTop: "30px",
-      width: "300px",
+      width: "100px",
       display: "block",
       marginLeft: "auto",
       marginRight: "auto",
@@ -43,17 +49,20 @@ function Profile() {
       justifyContent: "center",
     },
     card: {
-      width: `350px`,
+      width: `auto`,
       heigh: "500px",
       marginRight: "auto",
-      marginLeft: "auto",
+      marginLeft: "25px",
+      marginTop: "50px",
       padding: "10px",
       borderRadius: "2%",
-      borderColor: "rgba(0,0,0,0)",
+      // borderColor: "rgba(0,0,0,0)",
+      position: "fixed",
     },
     button: {
-      marginTop: "5px",
-      marginBottom: "2px",
+      marginLeft: "5px",
+      marginRight: "5px",
+      width: "30px",
     },
     ul: {
       display: "flex",
@@ -128,37 +137,54 @@ function Profile() {
 
   return (
     <div>
-      <Container>
-        <Card style={style.card}>
-          <Card.Img variant="top" src={profileImage} style={style.profile} />
-          <Card.Body>
-            <Card.Title>{name}</Card.Title>
-            <Card.Text>{email}</Card.Text>
-          </Card.Body>
-
-          <Button
-            variant="dark"
-            style={style.button}
-            onClick={() => {
-              history.replace("/post");
-            }}
-          >
-            New Post
-          </Button>
-          <Link
-            variant="dark"
-            class="btn btn-dark"
-            style={style.button}
-            to={`/`}
-          >
-            Home
-          </Link>
-          <Button variant="dark" style={style.button} onClick={logout}>
-            Logout
-          </Button>
-        </Card>
-      </Container>
-      <ul style={style.ul}>{posts.map(renderPosts)}</ul>
+      <Row style={{ height: "100vh", width: "100vw", margin: 0 }}>
+        <Container
+          fluid
+          className="col-2 text-center"
+          style={{ backgroundColor: "black" }}
+        >
+          <Card style={style.card}>
+            <Card.Img variant="top" src={profileImage} style={style.profile} />
+            <Card.Body>
+              <Card.Title>{name}</Card.Title>
+              {/* <Card.Text>{email}</Card.Text> */}
+              <BsEnvelope
+                as="Link"
+                onClick={() => {
+                  window.location.href = `mailto:${email}`;
+                }}
+              />
+            </Card.Body>
+            <div style={{ display: "inline-block" }}>
+              <BsPlusSquare
+                size={25}
+                style={style.button}
+                onClick={() => {
+                  history.replace("/post");
+                }}
+              />
+              <BsCollection
+                size={25}
+                style={style.button}
+                onClick={() => {
+                  history.replace(`/`);
+                }}
+              />
+              <BsBoxArrowRight
+                size={25}
+                style={style.button}
+                onClick={logout}
+              />
+            </div>
+          </Card>
+        </Container>
+        <Container
+          className="col-10"
+          style={{ float: "right", backgroundColor: "black" }}
+        >
+          <ul style={style.ul}>{posts.map(renderPosts)}</ul>
+        </Container>
+      </Row>
     </div>
   );
 }

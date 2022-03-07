@@ -59,9 +59,8 @@ function OnePost() {
     postCreatedAt: "",
     like: false,
   });
-  const [likes, setLikes] = useState([]);
   const [likePressed, setLikePressed] = useState(false);
-  const [numberOfLikes, setNumberOfLikes] = useState("");
+  const [numberOfLikes, setNumberOfLikes] = useState(0);
 
   const history = useHistory();
 
@@ -249,45 +248,43 @@ function OnePost() {
     }
   });
 
-  useEffect(() => {
-    const fetchLikes = async () => {
-      try {
-        const res = await fetch("/api/likes");
-        const jsonData = await res.json();
-        // sort the array by createdAt property ordered by descending values
-        const data = jsonData.sort((a, b) =>
-          a.createdAt < b.createdAt ? 1 : -1
-        );
-        setLikes([...data]);
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchLikes();
+  // useEffect(() => {
+  //   const fetchLikes = async () => {
+  //     try {
+  //       const res = await fetch("/api/likes");
+  //       const jsonData = await res.json();
+  //       // sort the array by createdAt property ordered by descending values
+  //       const data = jsonData.sort((a, b) =>
+  //         a.createdAt < b.createdAt ? 1 : -1
+  //       );
+  //       setLikes([...data]);
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchLikes();
 
-    if (likePressed) {
-      fetchLikes();
-    }
-  }, [likePressed]);
+  //   if (likePressed) {
+  //     fetchLikes();
+  //   }
+  // }, [likePressed]);
 
   useEffect(() => {
     const fetchPostLikes = async () => {
       try {
         const res = await fetch(`/api/likes/${postId}`);
         const data = await res.json();
-        setNumberOfLikes(data.length);
+        setNumberOfLikes(data);
       } catch (error) {
         console.log(error);
       }
-
-      console.log("This post has " + numberOfLikes + " likes.");
     };
     fetchPostLikes();
+  }, []);
 
-    if (likePressed) {
-      fetchPostLikes();
-    }
+  useEffect(() => {
+    console.log("like button pressed " + likePressed);
   }, [likePressed]);
 
   //////////////////////////////////////
@@ -497,7 +494,6 @@ function OnePost() {
       setLikePressed(true);
     };
 
-   
     //POST HTML
     return (
       <Container>
@@ -515,8 +511,7 @@ function OnePost() {
                 <p class="card-text">{post.description}</p>
               </div>
               <div>
-                <p>Likes: {numberOfLikes}</p>
-                <p>{likePressed}</p>
+                <p id="likesDisplay">Likes: {numberOfLikes.length}</p>
               </div>
               <div class="card-footer">
                 <form>
