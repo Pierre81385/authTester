@@ -165,6 +165,7 @@ function OnePost() {
   //query DynamoDB POSTS table for all posts.  Update posts state with data.
   useEffect(() => {
     console.log("getting posts");
+
     const fetchData = async () => {
       try {
         const res = await fetch("/api/posts");
@@ -248,43 +249,20 @@ function OnePost() {
     }
   });
 
-  // useEffect(() => {
-  //   const fetchLikes = async () => {
-  //     try {
-  //       const res = await fetch("/api/likes");
-  //       const jsonData = await res.json();
-  //       // sort the array by createdAt property ordered by descending values
-  //       const data = jsonData.sort((a, b) =>
-  //         a.createdAt < b.createdAt ? 1 : -1
-  //       );
-  //       setLikes([...data]);
-  //       console.log(data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   fetchLikes();
-
-  //   if (likePressed) {
-  //     fetchLikes();
-  //   }
-  // }, [likePressed]);
-
   useEffect(() => {
+    // SET NUMBER OF LIKES
+    console.log("like button pressed " + likePressed);
+
     const fetchPostLikes = async () => {
       try {
         const res = await fetch(`/api/likes/${postId}`);
         const data = await res.json();
-        setNumberOfLikes(data);
+        setNumberOfLikes(data); // number of likes isn't immediately accessible.  How do I fix this!
       } catch (error) {
         console.log(error);
       }
     };
     fetchPostLikes();
-  }, []);
-
-  useEffect(() => {
-    console.log("like button pressed " + likePressed);
   }, [likePressed]);
 
   //////////////////////////////////////
@@ -464,7 +442,7 @@ function OnePost() {
       }
     };
 
-    //like a post
+    //like a post funtions //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const likePost = () => {
       setLiked({
         postCreatedAt: post.createdAt.toString(),
@@ -490,8 +468,18 @@ function OnePost() {
         const data = await res.json();
         console.log(data);
       };
-      recordLike();
+      recordLike(); // recordLike() posts like to DB ///////////////////////////////////////////////////////////////////////////////////////
       setLikePressed(true);
+    };
+
+    const fetchPostLikes = async () => {
+      try {
+        const res = await fetch(`/api/likes/${postId}`);
+        const data = await res.json();
+        setNumberOfLikes(data); // number of likes isn't immediately accessible.  How do I fix this!
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     //POST HTML
@@ -528,7 +516,8 @@ function OnePost() {
                     type="button"
                     style={style.commentButton}
                     onClick={() => {
-                      likePost();
+                      likePost(); //likePost() Called //////////////////////////////////////////////////////////////////////////////////////
+                      history.push(`/singlepost/${userParam}`);
                     }}
                   >
                     Like
@@ -637,7 +626,7 @@ function OnePost() {
   return (
     <div>
       <Container>
-        <Card style={style.card}>
+        <Card style={style.card} >
           <Card.Img variant="top" src={profileImage} style={style.profile} />
           <Card.Body>
             <Card.Title>{name}</Card.Title>

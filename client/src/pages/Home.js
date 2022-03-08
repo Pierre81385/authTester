@@ -20,6 +20,7 @@ import {
   BsEnvelope,
 } from "react-icons/bs";
 
+
 function Home() {
   //user states
   const [user, loading, error] = useAuthState(auth);
@@ -96,6 +97,8 @@ function Home() {
     }
   };
 
+
+
   //query DynamoDB POSTS table for all posts.  Update posts state with data.
   useEffect(() => {
     console.log("getting posts");
@@ -133,6 +136,7 @@ function Home() {
         <img
           src={post.image}
           style={style.img}
+          data-aos="zoom-in"
           onClick={() => {
             history.push(`/singlepost/${s}`);
           }}
@@ -151,7 +155,7 @@ function Home() {
           className="col-2 text-center"
           style={{ backgroundColor: "black" }}
         >
-          <Card style={style.card}>
+          <Card style={style.card} data-aos="fade-right">
             <Card.Img variant="top" src={profileImage} style={style.profile} />
             <Card.Body>
               <Card.Title>{name}</Card.Title>

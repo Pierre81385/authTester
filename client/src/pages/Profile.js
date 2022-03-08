@@ -127,6 +127,7 @@ function Profile() {
         <img
           src={post.image}
           style={style.img}
+          data-aos="zoom-in"
           onClick={() => {
             history.push(`/singlepost/${s}`);
           }}
@@ -143,7 +144,7 @@ function Profile() {
           className="col-2 text-center"
           style={{ backgroundColor: "black" }}
         >
-          <Card style={style.card}>
+          <Card style={style.card} data-aos="fade-right">
             <Card.Img variant="top" src={profileImage} style={style.profile} />
             <Card.Body>
               <Card.Title>{name}</Card.Title>

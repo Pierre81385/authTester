@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { Card, Form, Container } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 
+
 const Post = () => {
   const history = useHistory();
 
