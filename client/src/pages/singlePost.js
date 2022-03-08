@@ -6,9 +6,16 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db, logout } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { Container, Card } from "react-bootstrap";
+import { Container, Card, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { updateCurrentUser } from "firebase/auth";
+import {
+  BsPlusSquare,
+  BsCollection,
+  BsBoxArrowRight,
+  BsEnvelope,
+  BsHandThumbsUp,
+} from "react-icons/bs";
 
 function OnePost() {
   const { createdAt: userParam } = useParams();
@@ -35,6 +42,7 @@ function OnePost() {
   const [characterCount, setCharacterCount] = useState(0);
   const [displayComment, setDisplayComment] = useState("none");
   const [commentButtonDisplay, setCommentButtonDisplay] = useState("inline");
+  const [commentFormDisplay, setCommentFormDisplay] = useState("inline");
   //reply states
   const [replyCharacterCount, setReplyCharacterCount] = useState(0);
   const [name, setName] = useState("");
@@ -68,28 +76,52 @@ function OnePost() {
 
   const style = {
     img: {
-      marginTop: "30px",
-      width: "50vw",
+      marginTop: "15px",
+      height: "50vh",
       display: "block",
       marginLeft: "auto",
       marginRight: "auto",
     },
     profile: {
       marginTop: "30px",
-      width: "300px",
+      width: "100px",
       display: "block",
       marginLeft: "auto",
       marginRight: "auto",
       borderRadius: "50%",
     },
+    container: {
+      display: "flex",
+      justifyContent: "center",
+    },
     card: {
-      width: `350px`,
+      width: `auto`,
       heigh: "500px",
       marginRight: "auto",
-      marginLeft: "auto",
+      marginLeft: "25px",
+      marginTop: "50px",
       padding: "10px",
       borderRadius: "2%",
-      borderColor: "rgba(0,0,0,0)",
+      // borderColor: "rgba(0,0,0,0)",
+      position: "fixed",
+    },
+    profileCard: {
+      width: `auto`,
+      heigh: "500px",
+      marginRight: "auto",
+      marginLeft: "25px",
+      marginTop: "50px",
+      padding: "10px",
+      borderRadius: "2%",
+      // borderColor: "rgba(0,0,0,0)",
+      position: "fixed",
+    },
+    cCard: {
+      marginTop: "50px",
+      marginBottom: "15px",
+      padding: "10px",
+      borderRadius: "2%",
+      // borderColor: "rgba(0,0,0,0)",
     },
     postCard: {
       width: "75vw",
@@ -99,22 +131,31 @@ function OnePost() {
       marginBottom: "15px",
     },
     button: {
-      marginTop: "5px",
-      marginBottom: "5px",
+      marginLeft: "5px",
+      marginRight: "5px",
+      width: "30px",
+    },
+    submitButton: {
+      //marginLeft: "5px",
+      marginRight: "5px",
+      width: "100%",
     },
     container: {
       textAlign: "center",
     },
     replyForm: {
+      width: "100%",
       display: `${displayReply}`,
       marginTop: "5px",
+      // marginLeft: "5px",
+      marginRight: "5px",
       marginBottom: "5px",
     },
     replyButton: {
       display: `${buttonDisplay}`,
     },
     showCommentForm: {
-      display: `${displayComment}`,
+      display: `${commentFormDisplay}`,
       marginTop: "5px",
       marginBottom: "5px",
     },
@@ -127,10 +168,9 @@ function OnePost() {
       display: `${details}`,
     },
     link: {
-      color: "black",
+      color: "white",
     },
     commentCard: {
-      width: "50%",
       padding: "10px",
       marginLeft: "auto",
       marginRight: "auto",
@@ -142,6 +182,8 @@ function OnePost() {
       marginLeft: "auto",
       marginRight: "auto",
       marginBottom: "15px",
+      backgroundColor: "black",
+      color: "white",
     },
     textArea: {
       width: "100%",
@@ -251,18 +293,24 @@ function OnePost() {
 
   useEffect(() => {
     // SET NUMBER OF LIKES
-    console.log("like button pressed " + likePressed);
+    //console.log("like button pressed " + likePressed);
 
     const fetchPostLikes = async () => {
       try {
         const res = await fetch(`/api/likes/${postId}`);
         const data = await res.json();
         setNumberOfLikes(data); // number of likes isn't immediately accessible.  How do I fix this!
+        document.getElementById("likesP").innerHTML = data.length;
       } catch (error) {
         console.log(error);
       }
     };
+
     fetchPostLikes();
+
+    if (likePressed) {
+      fetchPostLikes();
+    }
   }, [likePressed]);
 
   //////////////////////////////////////
@@ -326,6 +374,7 @@ function OnePost() {
         event.preventDefault();
         setReplyComment(comment.createdAt);
         setReplyPressed(true);
+        setCommentFormDisplay("none");
 
         if (displayReply === "none") {
           setDisplayReply("inline");
@@ -342,7 +391,7 @@ function OnePost() {
           <div className="text-center">
             {reply.commentCreatedAt === comment.createdAt.toString() ? (
               <>
-                <Card style={style.replyCard}>
+                <Card style={style.replyCard} data-aos="flip-down">
                   <Card.Title>
                     Reply made on {new Date(reply.createdAt).toString()} by{" "}
                     {reply.username}
@@ -363,21 +412,30 @@ function OnePost() {
           <div>
             {comment.postCreatedAt === post.createdAt.toString() ? (
               <>
-                <Card style={style.commentCard}>
-                  <Card.Title>
-                    {" "}
-                    Comment made on {new Date(
-                      comment.createdAt
-                    ).toString()} by {comment.username}
-                  </Card.Title>
-                  <Card.Body>{comment.comment}</Card.Body>
-                  <div className="text-center">{replys.map(renderReplys)}</div>
-                  <form onSubmit={showReply} style={style.replyButton}>
-                    <Button variant="dark" type="submit" style={style.button}>
-                      Reply
-                    </Button>
-                  </form>
-                </Card>
+                <Row>
+                  <Card style={style.commentCard} data-aos="flip-down">
+                    <Card.Title>
+                      {" "}
+                      Comment made on {new Date(
+                        comment.createdAt
+                      ).toString()}{" "}
+                      by {comment.username}
+                    </Card.Title>
+                    <Card.Body>{comment.comment}</Card.Body>
+                    <div className="text-center">
+                      {replys.map(renderReplys)}
+                    </div>
+                    <form onSubmit={showReply} style={style.replyButton}>
+                      <Button
+                        variant="dark"
+                        type="submit"
+                        style={style.submitButton}
+                      >
+                        Reply
+                      </Button>
+                    </form>
+                  </Card>
+                </Row>
               </>
             ) : (
               <></>
@@ -428,6 +486,7 @@ function OnePost() {
       setReplyCharacterCount(0);
       setReplysSubmitted(true);
       setDisplayReply("none");
+      setCommentFormDisplay("inline");
       setButtonDisplay("inline");
     };
     const showComment = (event) => {
@@ -444,17 +503,17 @@ function OnePost() {
 
     //like a post funtions //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const likePost = () => {
-      setLiked({
-        postCreatedAt: post.createdAt.toString(),
-        username: name,
-        liked: true,
-      });
+      // setLiked({
+      //   postCreatedAt: post.createdAt.toString(),
+      //   username: name,
+      //   liked: true,
+      // });
 
-      liked.postCreatedAt = post.createdAt.toString();
-      liked.username = name;
-      liked.like = true;
+      // liked.postCreatedAt = post.createdAt.toString();
+      // liked.username = name;
+      // liked.like = true;
 
-      console.log(liked);
+      // console.log(liked);
 
       const recordLike = async () => {
         const res = await fetch(`/api/likes/`, {
@@ -469,151 +528,180 @@ function OnePost() {
         console.log(data);
       };
       recordLike(); // recordLike() posts like to DB ///////////////////////////////////////////////////////////////////////////////////////
-      setLikePressed(true);
-    };
 
-    const fetchPostLikes = async () => {
-      try {
-        const res = await fetch(`/api/likes/${postId}`);
-        const data = await res.json();
-        setNumberOfLikes(data); // number of likes isn't immediately accessible.  How do I fix this!
-      } catch (error) {
-        console.log(error);
-      }
+      setLikePressed(true);
     };
 
     //POST HTML
     return (
-      <Container>
+      <Container style={{ margin: 0, padding: 0, width: "100vw" }}>
         {post.createdAt === Number(userParam) ? (
           <>
-            <div class="card text-center" style={style.postCard}>
-              <div class="card-header">{post.title}</div>
-              <div class="card-body">
-                <img src={post.image} style={style.img}></img>
-                <h5 class="card-title">
-                  <Link to={`/profile/${post.username}`} style={style.link}>
-                    By {post.username}
-                  </Link>
-                </h5>
-                <p class="card-text">{post.description}</p>
-              </div>
-              <div>
-                <p id="likesDisplay">Likes: {numberOfLikes.length}</p>
-              </div>
-              <div class="card-footer">
-                <form>
-                  <Button
-                    variant="dark"
-                    type="submit"
-                    onClick={showComment}
-                    style={style.commentButton}
-                  >
-                    Comment
-                  </Button>
-                  <Button
-                    variant="dark"
-                    type="button"
-                    style={style.commentButton}
-                    onClick={() => {
-                      likePost(); //likePost() Called //////////////////////////////////////////////////////////////////////////////////////
-                      history.push(`/singlepost/${userParam}`);
-                    }}
-                  >
-                    Like
-                  </Button>
-                </form>
-              </div>
-            </div>
-
-            <form onSubmit={handleFormSubmit} style={style.showCommentForm}>
-              <Card style={style.card}>
-                <Card.Title>
-                  <p
-                    className={`m-0 text-center ${
-                      characterCount === 280 ? "text-error" : ""
-                    }`}
-                  >
-                    Character Count: {characterCount}/280
+            <Row>
+              <div className="col-7 text-center">
+                <div style={{ marginTop: "15px", color: "white" }}>
+                  {post.title}
+                </div>
+                <img
+                  src={post.image}
+                  style={style.img}
+                  data-aos="zoom-in"
+                ></img>
+                <div>
+                  <h5 style={{ color: "white" }}>
+                    <Link to={`/profile/${post.username}`} style={style.link}>
+                      By {post.username}
+                    </Link>
+                  </h5>
+                  <p style={{ color: "white" }}>{post.description}</p>
+                </div>
+                <div>
+                  <p style={{ color: "white" }} id="likesP">
+                    Likes: {numberOfLikes.length}
                   </p>
-                </Card.Title>
-                <Card.Body>
-                  <textarea
-                    placeholder="Comment..."
-                    name="comment"
-                    value={commentInfo.comment}
-                    className="form-input col-12 "
-                    onChange={handleChange}
-                  ></textarea>
-                </Card.Body>
-                <Button
-                  className="btn col-12 "
-                  variant="dark"
-                  type="submit"
-                  style={style.button}
-                >
-                  Submit
-                </Button>
-                <Button
-                  className="btn col-12 "
-                  type="submit"
-                  variant="dark"
-                  style={style.showCommentForm}
-                  onClick={() => {
-                    setCommentButtonDisplay("inline");
-                    setDisplayComment("none");
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Card>
-            </form>
-            {/* <div style={style.postDetaails}> */}
-            <div>
-              <div className="text-center col-12">
-                {comments.map(renderComments)}
-              </div>
-
-              <form onSubmit={handleReplyFormSubmit} style={style.replyForm}>
-                <Card style={style.card} id="replyForm">
-                  <Card.Title>
-                    <p
-                      className={`m-0 text-center ${
-                        replyCharacterCount === 280 ? "text-error" : ""
-                      }`}
+                </div>
+                <div class="card-footer">
+                  <form>
+                    {/* <Button
+                      variant="light"
+                      type="submit"
+                      onClick={showComment}
+                      style={style.commentButton}
                     >
-                      Character Count: {replyCharacterCount}/280
-                    </p>
-                  </Card.Title>
-                  <Card.Body>
-                    <textarea
-                      placeholder="Reply..."
-                      className="form-input col-12 "
-                      name="reply"
-                      ref={fieldRef}
-                      value={replyInfo.reply}
-                      onChange={handleReplyChange}
-                    ></textarea>
-                  </Card.Body>
-                  <Button variant="dark" type="submit" style={style.button}>
-                    Submit
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="dark"
-                    style={(style.replyForm, style.button)}
-                    onClick={() => {
-                      setButtonDisplay("inline");
-                      setDisplayReply("none");
-                    }}
+                      Comment
+                    </Button> */}
+                    {/* <BsHandThumbsUp
+                      style={style.button}
+                      onClick={() => {
+                        liked.postCreatedAt = post.createdAt.toString();
+                        liked.username = name;
+                        liked.like = true;
+                        likePost(); //likePost() Called //////////////////////////////////////////////////////////////////////////////////////
+                        history.push(`/singlepost/${userParam}`);
+                      }}
+                    /> */}
+                    <Button
+                      variant="light"
+                      type="button"
+                      style={style.commentButton}
+                      onClick={() => {
+                        liked.postCreatedAt = post.createdAt.toString();
+                        liked.username = name;
+                        liked.like = true;
+                        likePost(); //likePost() Called //////////////////////////////////////////////////////////////////////////////////////
+                        history.push(`/singlepost/${userParam}`);
+                      }}
+                    >
+                      Like
+                    </Button>
+                  </form>
+                </div>
+              </div>
+              <div className="col-4 text-center">
+                <Row>
+                  <form
+                    onSubmit={handleFormSubmit}
+                    style={style.showCommentForm}
+                    data-aos="fade-left"
                   >
-                    Cancel
-                  </Button>
-
-                  <Card.Footer> </Card.Footer>
-                </Card>
-              </form>
-            </div>
+                    <Card style={style.cCard}>
+                      <Card.Title>
+                        <p
+                          className={`m-0 text-center ${
+                            characterCount === 280 ? "text-error" : ""
+                          }`}
+                        >
+                          Character Count: {characterCount}/280
+                        </p>
+                      </Card.Title>
+                      <Card.Body>
+                        <textarea
+                          placeholder="Comment..."
+                          name="comment"
+                          value={commentInfo.comment}
+                          className="form-input col-12 "
+                          onChange={handleChange}
+                        ></textarea>
+                      </Card.Body>
+                      <Button
+                        className="btn col-12 "
+                        variant="dark"
+                        type="submit"
+                        style={style.submitButton}
+                      >
+                        Submit
+                      </Button>
+                      {/* <Button
+                        className="btn col-12 "
+                        type="submit"
+                        variant="dark"
+                        style={style.showCommentForm}
+                        onClick={() => {
+                          setCommentButtonDisplay("inline");
+                          setDisplayComment("none");
+                        }}
+                      >
+                        Cancel
+                      </Button> */}
+                    </Card>
+                  </form>
+                  <form
+                    onSubmit={handleReplyFormSubmit}
+                    style={style.replyForm}
+                    data-aos="fade-left"
+                  >
+                    <Card style={style.cCard} id="replyForm">
+                      <Card.Title>
+                        <p
+                          className={`m-0 text-center ${
+                            replyCharacterCount === 280 ? "text-error" : ""
+                          }`}
+                        >
+                          Character Count: {replyCharacterCount}/280
+                        </p>
+                      </Card.Title>
+                      <Card.Body>
+                        <textarea
+                          placeholder="Reply..."
+                          className="form-input col-12 "
+                          name="reply"
+                          ref={fieldRef}
+                          value={replyInfo.reply}
+                          onChange={handleReplyChange}
+                        ></textarea>
+                      </Card.Body>
+                      <Button
+                        variant="dark"
+                        type="submit"
+                        style={style.submitButton}
+                      >
+                        Submit
+                      </Button>
+                      <Button
+                        type="submit"
+                        variant="dark"
+                        style={style.replyForm}
+                        onClick={() => {
+                          setButtonDisplay("inline");
+                          setDisplayReply("none");
+                          setCommentFormDisplay("inline");
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Card>
+                  </form>
+                </Row>
+                {/* <div style={style.postDetaails}> */}
+                <Row>
+                  <div>
+                    <div className="text-center col-12">
+                      {comments.map(renderComments)}
+                    </div>
+                  </div>
+                </Row>
+              </div>
+            </Row>
           </>
         ) : (
           <></>
@@ -625,38 +713,54 @@ function OnePost() {
   //Single post page html
   return (
     <div>
-      <Container>
-        <Card style={style.card} >
-          <Card.Img variant="top" src={profileImage} style={style.profile} />
-          <Card.Body>
-            <Card.Title>{name}</Card.Title>
-            <Card.Text>{email}</Card.Text>
-          </Card.Body>
-
-          <Button
-            variant="dark"
-            style={style.button}
-            onClick={() => {
-              history.replace("/post");
-            }}
-          >
-            New Post
-          </Button>
-          <Link
-            variant="dark"
-            class="btn btn-dark"
-            style={style.button}
-            to={`/`}
-          >
-            Home
-          </Link>
-          <Button variant="dark" style={style.button} onClick={logout}>
-            Logout
-          </Button>
-        </Card>
-      </Container>
-
-      <div className="text-center ">{posts.map(renderPosts)}</div>
+      <Row style={{ height: "10vh", width: "100vw", margin: 0 }}>
+        <Container
+          fluid
+          className="col-2 text-center"
+          style={{ backgroundColor: "black", height: "100vh" }}
+        >
+          <Card style={style.profileCard} data-aos="fade-right">
+            <Card.Img variant="top" src={profileImage} style={style.profile} />
+            <Card.Body>
+              <Card.Title>{name}</Card.Title>
+              {/* <Card.Text>{email}</Card.Text> */}
+              <BsEnvelope
+                as="Link"
+                onClick={() => {
+                  window.location.href = `mailto:${email}`;
+                }}
+              />
+            </Card.Body>
+            <div style={{ display: "inline-block" }}>
+              <BsPlusSquare
+                size={25}
+                style={style.button}
+                onClick={() => {
+                  history.replace("/post");
+                }}
+              />
+              <BsCollection
+                size={25}
+                style={style.button}
+                onClick={() => {
+                  history.replace(`/`);
+                }}
+              />
+              <BsBoxArrowRight
+                size={25}
+                style={style.button}
+                onClick={logout}
+              />
+            </div>
+          </Card>
+        </Container>
+        <Container
+          className="col-10"
+          style={{ float: "right", backgroundColor: "black", height: "1000vh" }}
+        >
+          <div className="text-center ">{posts.map(renderPosts)}</div>
+        </Container>
+      </Row>
     </div>
   );
 }

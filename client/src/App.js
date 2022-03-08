@@ -13,11 +13,16 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 
 function App() {
+  const style = {
+    main: {
+      backgroundColor: "black",
+    },
+  };
   useEffect(() => {
     Aos.init({});
   }, []);
   return (
-    <Router>
+    <Router style={style.main}>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/reset" component={Reset} />
