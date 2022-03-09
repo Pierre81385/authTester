@@ -1,6 +1,10 @@
 # authTester
 
-A basic framework for user login and profile creation.  Or that was the original intent, but after getting comfortable with DynamoDB, it's becoming more of an Instagram clone :-)
+A basic framework for user login and profile creation. Or that was the original intent, but after getting comfortable with DynamoDB, it's becoming more of an Instagram clone :-)
+
+# Screenshot
+
+![Alt Text](client/src/assets/instaclone.gif)
 
 # OUTINE
 

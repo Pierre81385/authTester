@@ -16,6 +16,7 @@ import {
   BsEnvelope,
   BsHandThumbsUp,
 } from "react-icons/bs";
+import { appHistory } from "../App";
 
 function OnePost() {
   const { createdAt: userParam } = useParams();
@@ -503,18 +504,6 @@ function OnePost() {
 
     //like a post funtions //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const likePost = () => {
-      // setLiked({
-      //   postCreatedAt: post.createdAt.toString(),
-      //   username: name,
-      //   liked: true,
-      // });
-
-      // liked.postCreatedAt = post.createdAt.toString();
-      // liked.username = name;
-      // liked.like = true;
-
-      // console.log(liked);
-
       const recordLike = async () => {
         const res = await fetch(`/api/likes/`, {
           method: "POST",
@@ -530,6 +519,17 @@ function OnePost() {
       recordLike(); // recordLike() posts like to DB ///////////////////////////////////////////////////////////////////////////////////////
 
       setLikePressed(true);
+    };
+
+    const fetchPostLikes = async () => {
+      try {
+        const res = await fetch(`/api/likes/${postId}`);
+        const data = await res.json();
+        setNumberOfLikes(data); // number of likes isn't immediately accessible.  How do I fix this!
+        return data.length;
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     //POST HTML
@@ -562,24 +562,6 @@ function OnePost() {
                 </div>
                 <div class="card-footer">
                   <form>
-                    {/* <Button
-                      variant="light"
-                      type="submit"
-                      onClick={showComment}
-                      style={style.commentButton}
-                    >
-                      Comment
-                    </Button> */}
-                    {/* <BsHandThumbsUp
-                      style={style.button}
-                      onClick={() => {
-                        liked.postCreatedAt = post.createdAt.toString();
-                        liked.username = name;
-                        liked.like = true;
-                        likePost(); //likePost() Called //////////////////////////////////////////////////////////////////////////////////////
-                        history.push(`/singlepost/${userParam}`);
-                      }}
-                    /> */}
                     <Button
                       variant="light"
                       type="button"
@@ -589,7 +571,8 @@ function OnePost() {
                         liked.username = name;
                         liked.like = true;
                         likePost(); //likePost() Called //////////////////////////////////////////////////////////////////////////////////////
-                        history.push(`/singlepost/${userParam}`);
+                        appHistory.push("/");
+                        appHistory.goBack();
                       }}
                     >
                       Like
@@ -631,18 +614,6 @@ function OnePost() {
                       >
                         Submit
                       </Button>
-                      {/* <Button
-                        className="btn col-12 "
-                        type="submit"
-                        variant="dark"
-                        style={style.showCommentForm}
-                        onClick={() => {
-                          setCommentButtonDisplay("inline");
-                          setDisplayComment("none");
-                        }}
-                      >
-                        Cancel
-                      </Button> */}
                     </Card>
                   </form>
                   <form

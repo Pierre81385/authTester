@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 import { Card, Form, Container } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 
-
 const Post = () => {
   const history = useHistory();
 
@@ -25,6 +24,9 @@ const Post = () => {
     title: "",
     description: "",
   });
+
+  const [imagePreview, setImagePreview] = useState("none");
+  const [submit, setSubmit] = useState("none");
 
   const fetchUserName = async () => {
     try {
@@ -55,14 +57,15 @@ const Post = () => {
       width: `350px`,
       marginRight: "auto",
       marginLeft: "auto",
+      marginTop: "50px",
       padding: "10px",
       borderRadius: "2%",
     },
-    container: {
-      textAlign: "center",
-    },
     postCard: {
       margin: "10px",
+      width: "50vw",
+      marginLeft: "auto",
+      marginRight: "auto",
     },
     button: {
       width: "100%",
@@ -71,6 +74,16 @@ const Post = () => {
     },
     link: {
       color: "black",
+    },
+    imagePreviewForm: {
+      textAlign: "center",
+      display: `${imagePreview}`,
+    },
+    submitButton: {
+      display: `${submit}`,
+      width: "100%",
+      marginTop: "5px",
+      marginBottom: "5px",
     },
   };
 
@@ -84,6 +97,8 @@ const Post = () => {
 
   const handleImageUpload = (event) => {
     event.preventDefault();
+    setImagePreview("inline");
+    setSubmit("inline");
     const data = new FormData();
     data.append("image", fileInput.current.files[0]);
     // send image file to endpoint with the postImage function
@@ -149,7 +164,7 @@ const Post = () => {
 
   return (
     <main>
-      <div style={style.container}>
+      <div style={style.imagePreviewForm}>
         <div class="card text-center" style={style.postCard}>
           <div class="card-header">{postInfo.title}</div>
           <div class="card-body">
@@ -162,7 +177,7 @@ const Post = () => {
         </div>
       </div>
       <Container style={style.container}>
-        <Card style={style.card}>
+        <Card style={style.card} data-aos="flip-up">
           <form onSubmit={handleFormSubmit}>
             <label className="form-input col-12  p-1">
               Add an image to your profile:
@@ -197,17 +212,17 @@ const Post = () => {
               className="form-input col-12 "
               onChange={handleChange}
             ></textarea>
-            <Button variant="dark" type="submit" style={style.button}>
+            <Button variant="dark" type="submit" style={style.submitButton}>
               Submit
             </Button>
             <Link
-            variant="dark"
-            class="btn btn-dark"
-            style={style.button}
-            to={`/`}
-          >
-            Cancel
-          </Link>
+              variant="dark"
+              class="btn btn-dark"
+              style={style.button}
+              to={`/`}
+            >
+              Cancel
+            </Link>
           </form>
         </Card>
       </Container>
