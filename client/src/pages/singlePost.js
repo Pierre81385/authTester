@@ -8,7 +8,6 @@ import { query, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Container, Card, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import { updateCurrentUser } from "firebase/auth";
 import {
   BsPlusSquare,
   BsCollection,
@@ -16,7 +15,7 @@ import {
   BsEnvelope,
   BsHandThumbsUp,
 } from "react-icons/bs";
-import { appHistory } from "../App";
+
 
 function OnePost() {
   const { createdAt: userParam } = useParams();
@@ -294,14 +293,14 @@ function OnePost() {
 
   useEffect(() => {
     // SET NUMBER OF LIKES
-    //console.log("like button pressed " + likePressed);
+    console.log("setting number of likes");
 
     const fetchPostLikes = async () => {
       try {
-        const res = await fetch(`/api/likes/${postId}`);
+        console.log("lookinh for likes on post: " + userParam);
+        const res = await fetch(`/api/likes/${userParam}`);
         const data = await res.json();
-        setNumberOfLikes(data); // number of likes isn't immediately accessible.  How do I fix this!
-        document.getElementById("likesP").innerHTML = data.length;
+        setNumberOfLikes(data.length); // number of likes isn't immediately accessible.  How do I fix this!
       } catch (error) {
         console.log(error);
       }
@@ -312,7 +311,7 @@ function OnePost() {
     if (likePressed) {
       fetchPostLikes();
     }
-  }, [likePressed]);
+  }, [userParam, likePressed]);
 
   //////////////////////////////////////
   ////////// - RENDER POSTS - //////////
@@ -504,6 +503,7 @@ function OnePost() {
 
     //like a post funtions //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const likePost = () => {
+      console.log("recording like to database");
       const recordLike = async () => {
         const res = await fetch(`/api/likes/`, {
           method: "POST",
@@ -517,19 +517,20 @@ function OnePost() {
         console.log(data);
       };
       recordLike(); // recordLike() posts like to DB ///////////////////////////////////////////////////////////////////////////////////////
-
-      setLikePressed(true);
     };
 
-    const fetchPostLikes = async () => {
-      try {
-        const res = await fetch(`/api/likes/${postId}`);
-        const data = await res.json();
-        setNumberOfLikes(data); // number of likes isn't immediately accessible.  How do I fix this!
-        return data.length;
-      } catch (error) {
-        console.log(error);
-      }
+    const updateLikeCount = () => {
+      console.log("updating like count");
+      const fetchPostLikes = async () => {
+        try {
+          const res = await fetch(`/api/likes/${userParam}`);
+          const data = await res.json();
+          setNumberOfLikes(data.length); // number of likes isn't immediately accessible.  How do I fix this!
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchPostLikes();
     };
 
     //POST HTML
@@ -555,11 +556,7 @@ function OnePost() {
                   </h5>
                   <p style={{ color: "white" }}>{post.description}</p>
                 </div>
-                <div>
-                  <p style={{ color: "white" }} id="likesP">
-                    Likes: {numberOfLikes.length}
-                  </p>
-                </div>
+                <div>{numberOfLikes}</div>
                 <div class="card-footer">
                   <form>
                     <Button
@@ -570,9 +567,9 @@ function OnePost() {
                         liked.postCreatedAt = post.createdAt.toString();
                         liked.username = name;
                         liked.like = true;
-                        likePost(); //likePost() Called //////////////////////////////////////////////////////////////////////////////////////
-                        appHistory.push("/");
-                        appHistory.goBack();
+                        likePost();
+                        updateLikeCount();
+                        setLikePressed(true);
                       }}
                     >
                       Like
