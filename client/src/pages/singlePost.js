@@ -6,7 +6,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db, logout } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { Container, Card, Row } from "react-bootstrap";
+import { Container, Card, Row, Image } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import {
   BsPlusSquare,
@@ -14,6 +14,7 @@ import {
   BsBoxArrowRight,
   BsEnvelope,
 } from "react-icons/bs";
+import addLove from "../assets/addLove.png";
 
 function OnePost() {
   const { createdAt: userParam } = useParams();
@@ -188,7 +189,7 @@ function OnePost() {
     textArea: {
       width: "100%",
     },
-    likeButton: {
+    loveButton: {
       display: `${displayLike}`,
       marginLeft: "2.5px",
       marginRight: "2.5px",
@@ -498,17 +499,17 @@ function OnePost() {
       setCommentFormDisplay("inline");
       setButtonDisplay("inline");
     };
-    const showComment = (event) => {
-      event.preventDefault();
+    // const showComment = (event) => {
+    //   event.preventDefault();
 
-      if (displayReply === "none") {
-        setDisplayComment("inline");
-        setCommentButtonDisplay("none");
-      } else {
-        setDisplayComment("none");
-        setCommentButtonDisplay("inline");
-      }
-    };
+    //   if (displayReply === "none") {
+    //     setDisplayComment("inline");
+    //     setCommentButtonDisplay("none");
+    //   } else {
+    //     setDisplayComment("none");
+    //     setCommentButtonDisplay("inline");
+    //   }
+    // };
 
     //like a post funtions //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const likePost = () => {
@@ -548,7 +549,8 @@ function OnePost() {
         {post.createdAt === Number(userParam) ? (
           <>
             <Row>
-              <div className="col-7 text-center">
+              <div className="col-1"></div>
+              <div className="col-10 text-center" style={{ padding: "25px" }}>
                 <div style={{ marginTop: "15px", color: "white" }}>
                   {post.title}
                 </div>
@@ -565,18 +567,20 @@ function OnePost() {
                   </h5>
                   <p style={{ color: "white" }}>{post.description}</p>
                 </div>
-                <div style={{ color: "white" }}>Likes: {numberOfLikes}</div>
+                <div style={{ color: "white" }}>
+                  Loved by {numberOfLikes} users.
+                </div>
 
-                <div class="card-footer">
+                <div class="card-footer" ref={fieldRef}>
                   {name === post.username || likedBy.length > 0 ? (
                     <></>
                   ) : (
                     <>
                       <form>
                         <Button
-                          variant="light"
+                          variant="black"
                           type="button"
-                          style={style.likeButton}
+                          style={style.loveButton}
                           onClick={() => {
                             liked.postCreatedAt = post.createdAt.toString();
                             liked.username = name;
@@ -586,104 +590,98 @@ function OnePost() {
                             setLikePressed(true);
                           }}
                         >
-                          Like
+                          <Image src={addLove} style={{ width: "25px" }} />
                         </Button>
                       </form>
                     </>
                   )}
                 </div>
-              </div>
-              <div className="col-4 text-center">
-                <Row>
-                  <form
-                    onSubmit={handleFormSubmit}
-                    style={style.showCommentForm}
-                    data-aos="fade-left"
-                  >
-                    <Card style={style.cCard}>
-                      <Card.Title>
-                        <p
-                          className={`m-0 text-center ${
-                            characterCount === 280 ? "text-error" : ""
-                          }`}
-                        >
-                          Character Count: {characterCount}/280
-                        </p>
-                      </Card.Title>
-                      <Card.Body>
-                        <textarea
-                          placeholder="Comment..."
-                          name="comment"
-                          value={commentInfo.comment}
-                          className="form-input col-12 "
-                          onChange={handleChange}
-                        ></textarea>
-                      </Card.Body>
-                      <Button
-                        className="btn col-12 "
-                        variant="dark"
-                        type="submit"
-                        style={style.submitButton}
+                {/* testing */}
+                <form
+                  onSubmit={handleFormSubmit}
+                  style={style.showCommentForm}
+                  data-aos="fade-left"
+                >
+                  <Card style={style.cCard}>
+                    <Card.Title>
+                      <p
+                        className={`m-0 text-center ${
+                          characterCount === 280 ? "text-error" : ""
+                        }`}
                       >
-                        Submit
-                      </Button>
-                    </Card>
-                  </form>
-                  <form
-                    onSubmit={handleReplyFormSubmit}
-                    style={style.replyForm}
-                    data-aos="fade-left"
-                  >
-                    <Card style={style.cCard} id="replyForm">
-                      <Card.Title>
-                        <p
-                          className={`m-0 text-center ${
-                            replyCharacterCount === 280 ? "text-error" : ""
-                          }`}
-                        >
-                          Character Count: {replyCharacterCount}/280
-                        </p>
-                      </Card.Title>
-                      <Card.Body>
-                        <textarea
-                          placeholder="Reply..."
-                          className="form-input col-12 "
-                          name="reply"
-                          ref={fieldRef}
-                          value={replyInfo.reply}
-                          onChange={handleReplyChange}
-                        ></textarea>
-                      </Card.Body>
-                      <Button
-                        variant="dark"
-                        type="submit"
-                        style={style.submitButton}
+                        Character Count: {characterCount}/280
+                      </p>
+                    </Card.Title>
+                    <Card.Body>
+                      <textarea
+                        placeholder="Comment..."
+                        name="comment"
+                        value={commentInfo.comment}
+                        className="form-input col-12 "
+                        onChange={handleChange}
+                      ></textarea>
+                    </Card.Body>
+                    <Button
+                      className="btn col-12 "
+                      variant="dark"
+                      type="submit"
+                      style={style.submitButton}
+                    >
+                      Submit
+                    </Button>
+                  </Card>
+                </form>
+                <form
+                  onSubmit={handleReplyFormSubmit}
+                  style={style.replyForm}
+                  data-aos="fade-left"
+                >
+                  <Card style={style.cCard} id="replyForm">
+                    <Card.Title>
+                      <p
+                        className={`m-0 text-center ${
+                          replyCharacterCount === 280 ? "text-error" : ""
+                        }`}
                       >
-                        Submit
-                      </Button>
-                      <Button
-                        type="submit"
-                        variant="dark"
-                        style={style.replyForm}
-                        onClick={() => {
-                          setButtonDisplay("inline");
-                          setDisplayReply("none");
-                          setCommentFormDisplay("inline");
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </Card>
-                  </form>
-                </Row>
-                {/* <div style={style.postDetaails}> */}
-                <Row>
-                  <div>
-                    <div className="text-center col-12">
-                      {comments.map(renderComments)}
-                    </div>
+                        Character Count: {replyCharacterCount}/280
+                      </p>
+                    </Card.Title>
+                    <Card.Body>
+                      <textarea
+                        placeholder="Reply..."
+                        className="form-input col-12 "
+                        name="reply"
+                        // ref={fieldRef}
+                        value={replyInfo.reply}
+                        onChange={handleReplyChange}
+                      ></textarea>
+                    </Card.Body>
+                    <Button
+                      variant="dark"
+                      type="submit"
+                      style={style.submitButton}
+                    >
+                      Submit
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="dark"
+                      style={style.replyForm}
+                      onClick={() => {
+                        setButtonDisplay("inline");
+                        setDisplayReply("none");
+                        setCommentFormDisplay("inline");
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Card>
+                </form>
+                <div>
+                  <div className="text-center col-12">
+                    {comments.map(renderComments)}
                   </div>
-                </Row>
+                </div>
               </div>
             </Row>
           </>
