@@ -13,9 +13,7 @@ import {
   BsCollection,
   BsBoxArrowRight,
   BsEnvelope,
-  BsHandThumbsUp,
 } from "react-icons/bs";
-
 
 function OnePost() {
   const { createdAt: userParam } = useParams();
@@ -69,6 +67,8 @@ function OnePost() {
   });
   const [likePressed, setLikePressed] = useState(false);
   const [numberOfLikes, setNumberOfLikes] = useState(0);
+  const [likedBy, setLikedBy] = useState([]);
+  const [displayLike, setDisplayLike] = useState("inline");
 
   const history = useHistory();
 
@@ -188,8 +188,14 @@ function OnePost() {
     textArea: {
       width: "100%",
     },
+    likeButton: {
+      display: `${displayLike}`,
+      marginLeft: "2.5px",
+      marginRight: "2.5px",
+    },
   };
 
+  // get current user from Firestore
   const fetchUser = async () => {
     try {
       const q = query(collection(db, "users"), where("uid", "==", user?.uid));
@@ -285,14 +291,15 @@ function OnePost() {
 
   const fieldRef = useRef(null);
 
+  // for scrolling user back to reply form
   useEffect(() => {
     if (replyPressed) {
       fieldRef.current.scrollIntoView();
     }
   });
 
+  // Query DynamoDB for all likes for post createdAt ID.  Recheck if like button pressed.
   useEffect(() => {
-    // SET NUMBER OF LIKES
     console.log("setting number of likes");
 
     const fetchPostLikes = async () => {
@@ -300,7 +307,9 @@ function OnePost() {
         console.log("lookinh for likes on post: " + userParam);
         const res = await fetch(`/api/likes/${userParam}`);
         const data = await res.json();
-        setNumberOfLikes(data.length); // number of likes isn't immediately accessible.  How do I fix this!
+
+        setNumberOfLikes(data.length);
+        setLikedBy([...data]);
       } catch (error) {
         console.log(error);
       }
@@ -556,25 +565,32 @@ function OnePost() {
                   </h5>
                   <p style={{ color: "white" }}>{post.description}</p>
                 </div>
-                <div>{numberOfLikes}</div>
+                <div style={{ color: "white" }}>Likes: {numberOfLikes}</div>
+
                 <div class="card-footer">
-                  <form>
-                    <Button
-                      variant="light"
-                      type="button"
-                      style={style.commentButton}
-                      onClick={() => {
-                        liked.postCreatedAt = post.createdAt.toString();
-                        liked.username = name;
-                        liked.like = true;
-                        likePost();
-                        updateLikeCount();
-                        setLikePressed(true);
-                      }}
-                    >
-                      Like
-                    </Button>
-                  </form>
+                  {name === post.username || likedBy.length > 0 ? (
+                    <></>
+                  ) : (
+                    <>
+                      <form>
+                        <Button
+                          variant="light"
+                          type="button"
+                          style={style.likeButton}
+                          onClick={() => {
+                            liked.postCreatedAt = post.createdAt.toString();
+                            liked.username = name;
+                            liked.like = true;
+                            likePost();
+                            updateLikeCount();
+                            setLikePressed(true);
+                          }}
+                        >
+                          Like
+                        </Button>
+                      </form>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="col-4 text-center">

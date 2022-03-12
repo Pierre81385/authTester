@@ -175,15 +175,7 @@ function Home() {
                   history.replace("/post");
                 }}
               />
-              {/* <Button
-            variant="dark"
-            style={style.button}
-            onClick={() => {
-              history.replace("/post");
-            }}
-          >
-            New Post
-          </Button> */}
+              
               <BsPersonSquare
                 size={25}
                 style={style.button}
@@ -192,22 +184,13 @@ function Home() {
                 }}
               />
 
-              {/* <Link
-            //variant="dark"
-            class="btn btn-dark"
-            style={style.button}
-            to={`/profile/${name}`}
-          >
-            My Profile
-          </Link> */}
+            
               <BsBoxArrowRight
                 size={25}
                 style={style.button}
                 onClick={logout}
               />
-              {/* <Button variant="dark" style={style.button} onClick={logout}>
-            Logout
-          </Button> */}
+           
             </div>
           </Card>
         </Container>
