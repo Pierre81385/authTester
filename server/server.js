@@ -8,6 +8,7 @@ const postRoutes = require("./routes/post-routes");
 const commentRoutes = require("./routes/comment-routes");
 const replyRoutes = require("./routes/reply-routes");
 const likeRoutes = require("./routes/likes-routes");
+const friendRoutes = require("./routes/friends-routes");
 
 // express middleware, used to be bodyparser
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use("/api/", postRoutes);
 app.use("/api", commentRoutes);
 app.use("/api", replyRoutes);
 app.use("/api/", likeRoutes);
+app.use("/api/", friendRoutes);
 
 // Start the API server
 app.listen(PORT, () =>
