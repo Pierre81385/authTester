@@ -104,7 +104,7 @@ function Home() {
     console.log("getting posts");
     const fetchData = async () => {
       try {
-        const res = await fetch("http://18.191.203.77/api/posts");
+        const res = await fetch("http://18.188.18.22/api/posts");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
