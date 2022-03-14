@@ -101,7 +101,7 @@ function Profile() {
     const fetchData = async () => {
       try {
         console.log(userParam);
-        const res = await fetch(`/api/posts/${userParam}`);
+        const res = await fetch(`http://18.191.203.77/api/posts/${userParam}`);
         const data = await res.json();
         setPosts([...data]);
         setIsLoaded(true);
