@@ -1,6 +1,6 @@
 # authTester
 
-A basic framework for user login and profile creation. Or that was the original intent, but after getting comfortable with DynamoDB, it's becoming more of an Instagram clone :-)
+A basic framework for user login and profile creation. Or that was the original intent, but after getting comfortable with DynamoDB, it's becoming more of an Instagram clone :-)  Basically a test bed for trying out AWS S3, DynamoDB, EC2, and Firebase.
 
 # Screenshot
 
@@ -14,6 +14,7 @@ A basic framework for user login and profile creation. Or that was the original 
 - AWS DynamoDB stores user posts, retrieving user data from Firebase Firestore, and image location data from AWS S3.
 - Express for backend routes
 - React Router for frontend routing
+- Deployed to EC2 instance at http://18.188.18.22/ on 3/14/2022
 
 # REMINDER
 
@@ -25,9 +26,6 @@ A basic framework for user login and profile creation. Or that was the original 
 
 # TO-DO
 
-- need to add condition so that a post cannot be liked multiple times by the same user
-- need to fix issue where number of likes displayed does not re-render on user press of like button
-
-- update and delete POST
-- delete COMMENT
-- delete REPLY
+- Build out friending functionality FRONT END
+- Reorganize layout to be mobile friendly.
+- Add config file for updating deploy address
