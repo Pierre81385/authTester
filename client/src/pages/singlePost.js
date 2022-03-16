@@ -217,7 +217,7 @@ function OnePost() {
 
     const fetchData = async () => {
       try {
-        const res = await fetch("http://18.188.18.22/api/posts");
+        const res = await fetch("/api/posts");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
@@ -241,7 +241,7 @@ function OnePost() {
     console.log("getting comments");
     const fetchData = async () => {
       try {
-        const res = await fetch("http://18.188.18.22/api/comments");
+        const res = await fetch("/api/comments");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
@@ -268,7 +268,7 @@ function OnePost() {
     console.log("getting replys");
     const fetchData = async () => {
       try {
-        const res = await fetch("http://18.188.18.22/api/replys");
+        const res = await fetch("/api/replys");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
@@ -306,7 +306,7 @@ function OnePost() {
     const fetchPostLikes = async () => {
       try {
         console.log("lookinh for likes on post: " + userParam);
-        const res = await fetch(`http://18.188.18.22/api/likes/${userParam}`);
+        const res = await fetch(`/api/likes/${userParam}`);
         const data = await res.json();
 
         setNumberOfLikes(data.length);
@@ -352,7 +352,7 @@ function OnePost() {
       event.preventDefault();
 
       const commentData = async () => {
-        const res = await fetch("http://18.188.18.22/api/comments", {
+        const res = await fetch("/api/comments", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -474,7 +474,7 @@ function OnePost() {
       event.preventDefault();
 
       const replyData = async () => {
-        const res = await fetch("http://18.188.18.22/api/replys", {
+        const res = await fetch("/api/replys", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -515,7 +515,7 @@ function OnePost() {
     const likePost = () => {
       console.log("recording like to database");
       const recordLike = async () => {
-        const res = await fetch(`http://18.188.18.22/api/likes/`, {
+        const res = await fetch(`/api/likes/`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -533,7 +533,7 @@ function OnePost() {
       console.log("updating like count");
       const fetchPostLikes = async () => {
         try {
-          const res = await fetch(`http://18.188.18.22/api/likes/${userParam}`);
+          const res = await fetch(`/api/likes/${userParam}`);
           const data = await res.json();
           setNumberOfLikes(data.length); // number of likes isn't immediately accessible.  How do I fix this!
         } catch (error) {

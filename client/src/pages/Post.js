@@ -104,7 +104,7 @@ const Post = () => {
     // send image file to endpoint with the postImage function
     const postImage = async () => {
       try {
-        const res = await fetch("http://18.188.18.22/api/image-upload", {
+        const res = await fetch("/api/image-upload", {
           mode: "cors",
           method: "POST",
           body: data,
@@ -137,7 +137,7 @@ const Post = () => {
     event.preventDefault();
 
     const postData = async () => {
-      const res = await fetch("http://18.188.18.22/api/posts", {
+      const res = await fetch("/api/posts", {
         method: "POST",
         headers: {
           Accept: "application/json",

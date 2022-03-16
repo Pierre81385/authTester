@@ -12,10 +12,6 @@ import OnePost from "./pages/singlePost";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-import { createBrowserHistory } from "history";
-
-export const appHistory = createBrowserHistory();
-
 function App() {
   const style = {
     main: {
@@ -26,7 +22,7 @@ function App() {
     Aos.init({});
   }, []);
   return (
-    <Router style={style.main} history={appHistory}>
+    <Router style={style.main}>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/reset" component={Reset} />
@@ -36,7 +32,6 @@ function App() {
         <Route exact path="/profile/:username" component={Profile} />
         <Route exact path="/singlepost/:createdAt" component={OnePost} />
       </Switch>
-      {/* </div> */}
     </Router>
   );
 }

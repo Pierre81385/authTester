@@ -20,7 +20,6 @@ import {
   BsEnvelope,
 } from "react-icons/bs";
 
-
 function Home() {
   //user states
   const [user, loading, error] = useAuthState(auth);
@@ -35,11 +34,12 @@ function Home() {
 
   const style = {
     profile: {
-      marginTop: "30px",
-      width: "100px",
+      marginTop: "5px",
+      width: "50px",
+      height: "50px",
       display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
+      marginLeft: "10px",
+      marginRight: "10px",
       borderRadius: "50%",
     },
     container: {
@@ -47,19 +47,23 @@ function Home() {
       justifyContent: "center",
     },
     card: {
-      width: `auto`,
-      heigh: "500px",
-      marginRight: "auto",
-      marginLeft: "25px",
-      marginTop: "50px",
-      padding: "10px",
-      borderRadius: "2%",
-      // borderColor: "rgba(0,0,0,0)",
+      width: `100vw`,
+      heigh: "100%",
+      padding: "5px",
       position: "fixed",
+      marginLeft: "0",
+      marginRight: "0",
+      textAlign: "center",
+      display: "flex",
+      flexDirection: "row",
+      zIndex: 1,
+      borderRadius: "0%",
     },
     button: {
       marginLeft: "5px",
       marginRight: "5px",
+      marginTop: "auto",
+      marginBottom: "auto",
       width: "30px",
       //backgroundColor: "rgba(0,0,0,0)"
     },
@@ -67,6 +71,9 @@ function Home() {
       display: "flex",
       flexWrap: "wrap",
       listStyle: "none",
+      margin: 0,
+      padding: 0,
+      zIndex: 0,
     },
 
     li: {
@@ -97,14 +104,12 @@ function Home() {
     }
   };
 
-
-
   //query DynamoDB POSTS table for all posts.  Update posts state with data.
   useEffect(() => {
     console.log("getting posts");
     const fetchData = async () => {
       try {
-        const res = await fetch("http://18.188.18.22/api/posts");
+        const res = await fetch("/api/posts");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
@@ -149,54 +154,88 @@ function Home() {
     <div
       style={{ display: "inline-block", width: "100%", margin: 0, padding: 0 }}
     >
-      <Row style={{ height: "100vh", width: "100vw", margin: 0 }}>
-        <Container
-          fluid
-          className="col-2 text-center"
-          style={{ backgroundColor: "black" }}
-        >
-          <Card style={style.card} data-aos="fade-right">
-            <Card.Img variant="top" src={profileImage} style={style.profile} />
-            <Card.Body>
-              <Card.Title>{name}</Card.Title>
-              {/* <Card.Text>{user?.email}</Card.Text> */}
-              <BsEnvelope
-                as="Link"
-                onClick={() => {
-                  window.location.href = `mailto:${user?.email}`;
-                }}
-              />
-            </Card.Body>
-            <div style={{ display: "inline-block" }}>
-              <BsPlusSquare
-                size={25}
-                style={style.button}
-                onClick={() => {
-                  history.replace("/post");
-                }}
-              />
-              
-              <BsPersonSquare
-                size={25}
-                style={style.button}
-                onClick={() => {
-                  history.replace(`/profile/${name}`);
-                }}
-              />
+      <Row
+        style={{
+          height: "10vh",
+          width: "100vw",
+          marginLeft: 0,
+          marginRight: 0,
+        }}
+        className="justify-content-center"
+      >
+        <Card style={style.card} data-aos="fade-right" id="profileCard">
+          <BsEnvelope
+            as="Link"
+            style={{ marginTop: "auto", marginBottom: "auto" }}
+            onClick={() => {
+              window.location.href = `mailto:${user?.email}`;
+            }}
+          />
+          <Card.Img
+            variant="top"
+            src={profileImage}
+            style={style.profile}
+            className="text-center"
+          />
+          <h1
+            style={{
+              textAlign: "left",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          >
+            INSTA
+          </h1>
+          <h5
+            style={{
+              textAlign: "left",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          >
+            petey
+          </h5>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginLeft: "auto",
+            }}
+          >
+            <BsPlusSquare
+              size={25}
+              style={style.button}
+              onClick={() => {
+                history.replace("/post");
+              }}
+            />
 
-            
-              <BsBoxArrowRight
-                size={25}
-                style={style.button}
-                onClick={logout}
-              />
-           
-            </div>
-          </Card>
-        </Container>
+            <BsPersonSquare
+              size={25}
+              style={style.button}
+              onClick={() => {
+                history.replace(`/profile/${name}`);
+              }}
+            />
+
+            <BsBoxArrowRight size={25} style={style.button} onClick={logout} />
+          </div>
+        </Card>
+      </Row>
+      <Row
+        style={{
+          width: "100vw",
+          marginTop: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          padding: 0,
+        }}
+        className="justify-content-center"
+      >
         <Container
-          className="col-10"
-          style={{ float: "right", backgroundColor: "black" }}
+          className="col-12 justify-content-center"
+          style={{ backgroundColor: "black", padding: 0 }}
         >
           <ul style={style.ul}>{posts.map(renderPosts)}</ul>
         </Container>
