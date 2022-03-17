@@ -163,7 +163,7 @@ function Home() {
         }}
         className="justify-content-center"
       >
-        <Card style={style.card} data-aos="fade-right" id="profileCard">
+        <Card style={style.card} data-aos="fade-down" id="profileCard">
           <BsEnvelope
             as="Link"
             style={{ marginTop: "auto", marginBottom: "auto" }}

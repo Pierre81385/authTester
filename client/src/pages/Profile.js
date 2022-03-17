@@ -37,11 +37,12 @@ function Profile() {
 
   const style = {
     profile: {
-      marginTop: "30px",
-      width: "100px",
+      marginTop: "5px",
+      width: "50px",
+      height: "50px",
       display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
+      marginLeft: "10px",
+      marginRight: "10px",
       borderRadius: "50%",
     },
     container: {
@@ -49,25 +50,33 @@ function Profile() {
       justifyContent: "center",
     },
     card: {
-      width: `auto`,
-      heigh: "500px",
-      marginRight: "auto",
-      marginLeft: "25px",
-      marginTop: "50px",
-      padding: "10px",
-      borderRadius: "2%",
-      // borderColor: "rgba(0,0,0,0)",
+      width: `100vw`,
+      heigh: "100%",
+      padding: "5px",
       position: "fixed",
+      marginLeft: "0",
+      marginRight: "0",
+      textAlign: "center",
+      display: "flex",
+      flexDirection: "row",
+      zIndex: 1,
+      borderRadius: "0%",
     },
     button: {
       marginLeft: "5px",
       marginRight: "5px",
+      marginTop: "auto",
+      marginBottom: "auto",
       width: "30px",
+      //backgroundColor: "rgba(0,0,0,0)"
     },
     ul: {
       display: "flex",
       flexWrap: "wrap",
       listStyle: "none",
+      margin: 0,
+      padding: 0,
+      zIndex: 0,
     },
 
     li: {
@@ -77,8 +86,10 @@ function Profile() {
     img: {
       maxHeight: "100%",
       minWidth: "100%",
+      // height: "20vh",
+      // width: "20vw",
       objectFit: "cover",
-      verticalAlign: "bottom",
+      verticalAlign: "top",
     },
   };
 
@@ -137,51 +148,82 @@ function Profile() {
   };
 
   return (
-    <div>
-      <Row style={{ height: "100vh", width: "100vw", margin: 0 }}>
+    <div
+      style={{ display: "inline-block", width: "100%", margin: 0, padding: 0 }}
+    >
+      <Row
+        style={{
+          height: "10vh",
+          width: "100vw",
+          marginLeft: 0,
+          marginRight: 0,
+        }}
+        className="justify-content-center"
+      >
+        <Card style={style.card} data-aos="fade-down">
+          <BsEnvelope
+            as="Link"
+            style={{ marginTop: "auto", marginBottom: "auto" }}
+            onClick={() => {
+              window.location.href = `mailto:${email}`;
+            }}
+          />
+          <Card.Img
+            variant="top"
+            src={profileImage}
+            style={style.profile}
+            className="text-center"
+          />
+          <Card.Title
+            style={{
+              textAlign: "left",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          >
+            {name}
+          </Card.Title>
+          {/* <Card.Text>{email}</Card.Text> */}
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginLeft: "auto",
+            }}
+          >
+            <BsPlusSquare
+              size={25}
+              style={style.button}
+              onClick={() => {
+                history.replace("/post");
+              }}
+            />
+            <BsCollection
+              size={25}
+              style={style.button}
+              onClick={() => {
+                history.replace(`/`);
+              }}
+            />
+            <BsBoxArrowRight size={25} style={style.button} onClick={logout} />
+          </div>
+        </Card>
+      </Row>
+      <Row
+        style={{
+          width: "100vw",
+          marginTop: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          padding: 0,
+        }}
+        className="justify-content-center"
+      >
         <Container
-          fluid
-          className="col-2 text-center"
-          style={{ backgroundColor: "black" }}
-        >
-          <Card style={style.card} data-aos="fade-right">
-            <Card.Img variant="top" src={profileImage} style={style.profile} />
-            <Card.Body>
-              <Card.Title>{name}</Card.Title>
-              {/* <Card.Text>{email}</Card.Text> */}
-              <BsEnvelope
-                as="Link"
-                onClick={() => {
-                  window.location.href = `mailto:${email}`;
-                }}
-              />
-            </Card.Body>
-            <div style={{ display: "inline-block" }}>
-              <BsPlusSquare
-                size={25}
-                style={style.button}
-                onClick={() => {
-                  history.replace("/post");
-                }}
-              />
-              <BsCollection
-                size={25}
-                style={style.button}
-                onClick={() => {
-                  history.replace(`/`);
-                }}
-              />
-              <BsBoxArrowRight
-                size={25}
-                style={style.button}
-                onClick={logout}
-              />
-            </div>
-          </Card>
-        </Container>
-        <Container
-          className="col-10"
-          style={{ float: "right", backgroundColor: "black" }}
+          className="col-12 justify-content-center"
+          style={{ backgroundColor: "black", padding: 0 }}
         >
           <ul style={style.ul}>{posts.map(renderPosts)}</ul>
         </Container>

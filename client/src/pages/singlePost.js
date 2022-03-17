@@ -78,17 +78,20 @@ function OnePost() {
   const style = {
     img: {
       marginTop: "15px",
-      height: "50vh",
+      maxWidth: "90vw",
+      maxHeight: "90vh",
       display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
+      marginLeft: "5px",
+      marginRight: "5px",
+      display: "float",
     },
     profile: {
-      marginTop: "30px",
-      width: "100px",
+      marginTop: "5px",
+      width: "50px",
+      height: "50px",
       display: "block",
-      marginLeft: "auto",
-      marginRight: "auto",
+      marginLeft: "10px",
+      marginRight: "10px",
       borderRadius: "50%",
     },
     container: {
@@ -107,22 +110,23 @@ function OnePost() {
       position: "fixed",
     },
     profileCard: {
-      width: `auto`,
-      heigh: "500px",
-      marginRight: "auto",
-      marginLeft: "25px",
-      marginTop: "50px",
-      padding: "10px",
-      borderRadius: "2%",
-      // borderColor: "rgba(0,0,0,0)",
+      width: `100vw`,
+      heigh: "100%",
+      padding: "5px",
       position: "fixed",
+      marginLeft: "0",
+      marginRight: "0",
+      textAlign: "center",
+      display: "flex",
+      flexDirection: "row",
+      zIndex: 1,
+      borderRadius: "0%",
     },
     cCard: {
-      marginTop: "50px",
-      marginBottom: "15px",
       padding: "10px",
-      borderRadius: "2%",
-      // borderColor: "rgba(0,0,0,0)",
+      marginLeft: "auto",
+      marginRight: "auto",
+      marginBottom: "15px",
     },
     postCard: {
       width: "75vw",
@@ -548,9 +552,25 @@ function OnePost() {
       <Container style={{ margin: 0, padding: 0, width: "100vw" }}>
         {post.createdAt === Number(userParam) ? (
           <>
-            <Row>
-              <div className="col-1"></div>
-              <div className="col-10 text-center" style={{ padding: "25px" }}>
+            <Row
+              style={{
+                width: "100vw",
+                marginTop: 0,
+                marginLeft: 0,
+                marginRight: 0,
+                padding: 0,
+              }}
+              className="justify-content-center"
+            >
+              <div
+                className="col-12 text-center"
+                style={{
+                  padding: "25px",
+                  marginLeft: 0,
+                  marginRight: 0,
+                  width: "100vw",
+                }}
+              >
                 <div style={{ marginTop: "15px", color: "white" }}>
                   {post.title}
                 </div>
@@ -559,6 +579,7 @@ function OnePost() {
                   style={style.img}
                   data-aos="zoom-in"
                 ></img>
+
                 <div>
                   <h5 style={{ color: "white" }}>
                     <Link to={`/profile/${post.username}`} style={style.link}>
@@ -694,53 +715,129 @@ function OnePost() {
 
   //Single post page html
   return (
-    <div>
-      <Row style={{ height: "10vh", width: "100vw", margin: 0 }}>
+    <div
+      style={{ display: "inline-block", width: "100%", margin: 0, padding: 0 }}
+    >
+      <Row
+        style={{
+          height: "10vh",
+          width: "100vw",
+          marginLeft: 0,
+          marginRight: 0,
+        }}
+        className="justify-content-center"
+      >
+        <Card style={style.profileCard} data-aos="fade-down" id="profileCard">
+          <BsEnvelope
+            as="Link"
+            style={{ marginTop: "auto", marginBottom: "auto" }}
+            onClick={() => {
+              window.location.href = `mailto:${email}`;
+            }}
+          />
+          <Card.Img
+            variant="top"
+            src={profileImage}
+            style={style.profile}
+            className="text-center"
+          />{" "}
+          <h1
+            style={{
+              textAlign: "left",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          >
+            INSTA
+          </h1>
+          <h5
+            style={{
+              textAlign: "left",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          >
+            petey
+          </h5>
+          <Card.Title
+            style={{
+              textAlign: "left",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          ></Card.Title>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginLeft: "auto",
+            }}
+          >
+            {" "}
+            <BsPlusSquare
+              size={25}
+              style={{
+                marginLeft: "5px",
+                marginRight: "5px",
+                marginTop: "auto",
+                marginBottom: "auto",
+                width: "30px",
+              }}
+              onClick={() => {
+                history.replace("/post");
+              }}
+            />
+            <BsCollection
+              size={25}
+              style={{
+                marginLeft: "5px",
+                marginRight: "5px",
+                marginTop: "auto",
+                marginBottom: "auto",
+                width: "30px",
+              }}
+              onClick={() => {
+                history.replace(`/`);
+              }}
+            />
+            <BsBoxArrowRight
+              size={25}
+              style={{
+                marginLeft: "5px",
+                marginRight: "5px",
+                marginTop: "auto",
+                marginBottom: "auto",
+                width: "30px",
+              }}
+              onClick={logout}
+            />
+          </div>
+        </Card>
+      </Row>
+      <Row
+        style={{
+          width: "100vw",
+          marginTop: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          padding: 0,
+        }}
+        className="justify-content-center"
+      >
         <Container
-          fluid
-          className="col-2 text-center"
-          style={{ backgroundColor: "black", height: "100vh" }}
+          className="col-12 justify-content-center"
+          style={{ backgroundColor: "black", padding: 0 }}
         >
-          <Card style={style.profileCard} data-aos="fade-right">
-            <Card.Img variant="top" src={profileImage} style={style.profile} />
-            <Card.Body>
-              <Card.Title>{name}</Card.Title>
-              {/* <Card.Text>{email}</Card.Text> */}
-              <BsEnvelope
-                as="Link"
-                onClick={() => {
-                  window.location.href = `mailto:${email}`;
-                }}
-              />
-            </Card.Body>
-            <div style={{ display: "inline-block" }}>
-              <BsPlusSquare
-                size={25}
-                style={style.button}
-                onClick={() => {
-                  history.replace("/post");
-                }}
-              />
-              <BsCollection
-                size={25}
-                style={style.button}
-                onClick={() => {
-                  history.replace(`/`);
-                }}
-              />
-              <BsBoxArrowRight
-                size={25}
-                style={style.button}
-                onClick={logout}
-              />
-            </div>
-          </Card>
-        </Container>
-        <Container
-          className="col-10"
-          style={{ float: "right", backgroundColor: "black", height: "1000vh" }}
-        >
-          <div className="text-center ">{posts.map(renderPosts)}</div>
+          <div
+            className="text-center"
+            style={{
+              margin: 0,
+              padding: 0,
+            }}
+          >
+            {posts.map(renderPosts)}
+          </div>
         </Container>
       </Row>
     </div>
