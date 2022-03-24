@@ -13,6 +13,8 @@ import {
   BsCollection,
   BsBoxArrowRight,
   BsEnvelope,
+  BsFillPersonPlusFill,
+  BsFillPersonDashFill,
 } from "react-icons/bs";
 import addLove from "../assets/addLove.png";
 
@@ -70,10 +72,17 @@ function OnePost() {
   const [numberOfLikes, setNumberOfLikes] = useState(0);
   const [likedBy, setLikedBy] = useState([]);
   const [displayLike, setDisplayLike] = useState("inline");
+  //friend states
+  const [allFriends, setAllFriends] = useState([]);
+  const [allFriendsFirbase, setAllFriendsFirebase] = useState([]);
+  const [friend, setFriend] = useState({
+    uid: "",
+    username: "",
+  });
+  const [friendsPressed, setFriendsPressed] = useState(false);
+  const [userFriends, setUserFriends] = useState("");
 
   const history = useHistory();
-
-  var postId = "";
 
   const style = {
     img: {
@@ -327,6 +336,41 @@ function OnePost() {
     }
   }, [userParam, likePressed]);
 
+  useEffect(() => {
+    //get alllllll friends
+    const requestFreinds = async () => {
+      const res = await fetch("/api/friends/");
+      const data = await res.json();
+      console.log("set allFriends with " + data);
+      setAllFriendsFirebase(data.uid);
+      setAllFriends(JSON.stringify(data));
+      console.log("allFriends set: " + allFriends);
+    };
+
+    requestFreinds();
+
+    if (friendsPressed) {
+      requestFreinds();
+    }
+  }, [friendsPressed]);
+
+  useEffect(() => {
+    //get alllllll friends by user
+    const requestFreinds = async () => {
+      const res = await fetch(`/api/friends/${name}`);
+      const data = await res.json();
+      setUserFriends(data);
+    };
+
+    requestFreinds();
+
+    if (friendsPressed) {
+      requestFreinds();
+    }
+  }, [friendsPressed]);
+
+  // Query DynamoDB for all freinds by firebaseUserId as user.uid
+
   //////////////////////////////////////
   ////////// - RENDER POSTS - //////////
   //////////////////////////////////////
@@ -335,8 +379,6 @@ function OnePost() {
     //////////////////////////////////////
     ////////// - RENDER COMMENTS - ///////
     //////////////////////////////////////
-
-    postId = post.createdAt;
 
     //set commentInfo state in preparation for submit
     const handleChange = (event) => {
@@ -503,17 +545,6 @@ function OnePost() {
       setCommentFormDisplay("inline");
       setButtonDisplay("inline");
     };
-    // const showComment = (event) => {
-    //   event.preventDefault();
-
-    //   if (displayReply === "none") {
-    //     setDisplayComment("inline");
-    //     setCommentButtonDisplay("none");
-    //   } else {
-    //     setDisplayComment("none");
-    //     setCommentButtonDisplay("inline");
-    //   }
-    // };
 
     //like a post funtions //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const likePost = () => {
@@ -545,6 +576,30 @@ function OnePost() {
         }
       };
       fetchPostLikes();
+    };
+
+    //make a friend functions
+    const friendUser = () => {
+      const recordFriend = async () => {
+        const res = await fetch(`/api/friends/`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(friend),
+        });
+      };
+
+      if (friend.uid === user.uid) {
+        console.log("you can't friend yourself!");
+      } else if (allFriends.length === 0) {
+        recordFriend();
+      } else if (allFriends.includes(post.firebaseUid)) {
+        console.log("you're already friends");
+      } else {
+        recordFriend();
+      }
     };
 
     //POST HTML
@@ -585,6 +640,22 @@ function OnePost() {
                     <Link to={`/profile/${post.username}`} style={style.link}>
                       By {post.username}
                     </Link>
+                    <BsFillPersonPlusFill
+                      as="Link"
+                      style={{ marginTop: "auto", marginBottom: "auto" }}
+                      onClick={() => {
+                        console.log("friend pressed");
+                        setFriendsPressed(true);
+
+                        friend.uid = post.firebaseUid;
+                        friend.username = name;
+                        setFriend({
+                          uid: post.firebaseUid,
+                          username: name,
+                        });
+                        friendUser();
+                      }}
+                    />
                   </h5>
                   <p style={{ color: "white" }}>{post.description}</p>
                 </div>
@@ -592,7 +663,7 @@ function OnePost() {
                   Loved by {numberOfLikes} users.
                 </div>
 
-                <div class="card-footer" ref={fieldRef}>
+                <div className="card-footer" ref={fieldRef}>
                   {name === post.username || likedBy.length > 0 ? (
                     <></>
                   ) : (
@@ -740,7 +811,7 @@ function OnePost() {
             src={profileImage}
             style={style.profile}
             className="text-center"
-          />{" "}
+          />
           <h1
             style={{
               textAlign: "left",
@@ -759,13 +830,7 @@ function OnePost() {
           >
             petey
           </h5>
-          <Card.Title
-            style={{
-              textAlign: "left",
-              marginTop: "auto",
-              marginBottom: "auto",
-            }}
-          ></Card.Title>
+
           <div
             style={{
               display: "flex",
@@ -774,7 +839,14 @@ function OnePost() {
               marginLeft: "auto",
             }}
           >
-            {" "}
+            <Card.Title
+              style={{
+                marginTop: "auto",
+                marginBottom: "auto",
+              }}
+            >
+              <h5>Friends: {userFriends.length}</h5>
+            </Card.Title>
             <BsPlusSquare
               size={25}
               style={{

@@ -14,7 +14,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 //define table to be working on
 const table = "Friends";
 
-//create route to get all likes
+//create route to get all friends
 router.get("/friends", (req, res) => {
   const params = {
     TableName: table,
@@ -22,27 +22,29 @@ router.get("/friends", (req, res) => {
   // Scan returns all items in the table that meet the params
   dynamodb.scan(params, (err, data) => {
     if (err) {
+      console.log("error getting friends!");
       res.status(500).json(err); // an error occurred
     } else {
+      console.log("found some friends!");
       res.json(data.Items);
     }
   });
 });
 
-// get all likes by uid
-router.get("/friends/:firebaseUserId", (req, res) => {
-  console.log(`Querying for friends information from ${req.params.firebaseUserId}.`);
+// get all friends by name
+router.get("/friends/:username", (req, res) => {
+  console.log(`Querying for friends information from ${req.params.username}.`);
   const params = {
     TableName: table,
     ProjectionExpression: "#uid, #un, #ca",
-    KeyConditionExpression: "#uid = :firebaseUserId",
+    KeyConditionExpression: "#uid = :uid",
     ExpressionAttributeNames: {
-      "#uid": "firebaseUserID",
-      "#un": "username",
+      "#uid": "uid",
       "#ca": "createdAt",
+      "#un": "username",
     },
     ExpressionAttributeValues: {
-      ":uid": req.params.firebaseUserId,
+      ":uid": req.params.username,
     },
     ScanIndexForward: false, // false makes the order descending(true is default)
   };
@@ -62,7 +64,7 @@ router.post("/friends", (req, res) => {
   const params = {
     TableName: table,
     Item: {
-      firebaseUserId: req.body.firebaseUserId,
+      uid: req.body.uid,
       username: req.body.username,
       createdAt: Date.now(),
     },

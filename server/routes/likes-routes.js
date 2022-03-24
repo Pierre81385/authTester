@@ -81,7 +81,7 @@ router.post("/likes", (req, res) => {
         );
         res.status(500).json(err); // an error occurred
       } else {
-        console.log("Added like status:", JSON.stringify(data, null, 2));
+        console.log("Added friend status:", JSON.stringify(data, null, 2));
         res.json({ Added: JSON.stringify(data, null, 2) });
       }
     });

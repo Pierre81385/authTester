@@ -1,37 +1,37 @@
-const AWS = require("aws-sdk")
+const AWS = require("aws-sdk");
 
 AWS.config.update({
-    region: "us-east-2"
-})
+  region: "us-east-2",
+});
 
-const dynamodb = new AWS.DynamoDB({ apiVersion: "2012-08-10"})
+const dynamodb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
 
 const params = {
-    TableName: "Freinds",
-    KeySchema: [
-        { AttributeName: "uid", KeyType: "HASH"},
-        { AttributeName: "createdAt", KeyType: "RANGE"},
-    ],
-    AttributeDefinitions: [
-        { AttributeName: "uid", AttributeType: "S"},
-        { AttributeName: "createdAt", AttributeType: "N"},
-    ],
-    ProvisionedThroughput: {
-        ReadCapacityUnits: 10,
-        WriteCapacityUnits: 10,
-      },
-}
+  TableName: "Friends",
+  KeySchema: [
+    { AttributeName: "uid", KeyType: "HASH" },
+    { AttributeName: "createdAt", KeyType: "RANGE" },
+  ],
+  AttributeDefinitions: [
+    { AttributeName: "uid", AttributeType: "S" },
+    { AttributeName: "createdAt", AttributeType: "N" },
+  ],
+  ProvisionedThroughput: {
+    ReadCapacityUnits: 10,
+    WriteCapacityUnits: 10,
+  },
+};
 
 dynamodb.createTable(params, (err, data) => {
-    if (err) {
-        console.error(
-          "Unable to create table. Error JSON:",
-          JSON.stringify(err, null, 2)
-        );
-      } else {
-        console.log(
-          "Created table. Table description JSON:",
-          JSON.stringify(err, null, 2)
-        );
-      }
-})
+  if (err) {
+    console.error(
+      "Unable to create table. Error JSON:",
+      JSON.stringify(err, null, 2)
+    );
+  } else {
+    console.log(
+      "Created table. Table description JSON:",
+      JSON.stringify(err, null, 2)
+    );
+  }
+});

@@ -25,10 +25,14 @@ function Home() {
   const [user, loading, error] = useAuthState(auth);
   const [name, setName] = useState("");
   const [profileImage, setProfileImage] = useState("");
+  const [userFriends, setUserFriends] = useState("");
 
   //post states
   const [posts, setPosts] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  //image states
+  const [width, setWidth] = useState("100%");
 
   const history = useHistory();
 
@@ -82,7 +86,7 @@ function Home() {
     },
     img: {
       maxHeight: "100%",
-      minWidth: "100%",
+      minWidth: `${width}`,
       // height: "20vh",
       // width: "20vw",
       objectFit: "cover",
@@ -139,6 +143,7 @@ function Home() {
     return (
       <li style={style.li}>
         <img
+          id={post.createdAt}
           src={post.image}
           style={style.img}
           data-aos="zoom-in"
@@ -149,6 +154,31 @@ function Home() {
       </li>
     );
   };
+
+  useEffect(() => {
+    var imgWidth = [];
+    for (var i = 0; i < posts.length; i++) {
+      console.log(posts[i].createdAt);
+      console.log(document.getElementById(posts[i].createdAt).width);
+      imgWidth.push(document.getElementById(posts[i].createdAt).width);
+      imgWidth.sort();
+      console.log("sorted " + imgWidth);
+      var size = imgWidth.length - 1;
+      console.log("width set at " + imgWidth[size]);
+      setWidth(imgWidth[size]);
+    }
+  });
+
+  useEffect(() => {
+    //get alllllll friends by user
+    const requestFreinds = async () => {
+      const res = await fetch(`/api/friends/${name}`);
+      const data = await res.json();
+      setUserFriends(data);
+    };
+
+    requestFreinds();
+  }, []);
 
   return (
     <div
@@ -177,6 +207,7 @@ function Home() {
             style={style.profile}
             className="text-center"
           />
+
           <h1
             style={{
               textAlign: "left",
@@ -203,6 +234,14 @@ function Home() {
               marginLeft: "auto",
             }}
           >
+            <Card.Title
+              style={{
+                marginTop: "auto",
+                marginBottom: "auto",
+              }}
+            >
+              <h5>Friends: {userFriends.length}</h5>
+            </Card.Title>
             <BsPlusSquare
               size={25}
               style={style.button}
