@@ -35,7 +35,7 @@ function Register() {
     // send image file to endpoint with the postImage function
     const postImage = async () => {
       try {
-        const res = await fetch("/api/image-upload", {
+        const res = await fetch("http://18.188.18.22/api/image-upload", {
           mode: "cors",
           method: "POST",
           body: data,

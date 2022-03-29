@@ -113,7 +113,7 @@ function Home() {
     console.log("getting posts");
     const fetchData = async () => {
       try {
-        const res = await fetch("/api/posts");
+        const res = await fetch("http://18.188.18.22/api/posts");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
@@ -172,7 +172,7 @@ function Home() {
   useEffect(() => {
     //get alllllll friends by user
     const requestFreinds = async () => {
-      const res = await fetch(`/api/friends/${name}`);
+      const res = await fetch(`http://18.188.18.22/api/friends/${name}`);
       const data = await res.json();
       setUserFriends(data);
     };
