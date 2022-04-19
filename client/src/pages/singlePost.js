@@ -230,7 +230,7 @@ function OnePost() {
 
     const fetchData = async () => {
       try {
-        const res = await fetch("http://18.188.18.22/api/posts");
+        const res = await fetch("/api/posts");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
@@ -254,7 +254,7 @@ function OnePost() {
     console.log("getting comments");
     const fetchData = async () => {
       try {
-        const res = await fetch("http://18.188.18.22/api/comments");
+        const res = await fetch("/api/comments");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
@@ -281,7 +281,7 @@ function OnePost() {
     console.log("getting replys");
     const fetchData = async () => {
       try {
-        const res = await fetch("http://18.188.18.22/api/replys");
+        const res = await fetch("/api/replys");
         const jsonData = await res.json();
         // sort the array by createdAt property ordered by descending values
         const data = jsonData.sort((a, b) =>
@@ -319,7 +319,7 @@ function OnePost() {
     const fetchPostLikes = async () => {
       try {
         console.log("lookinh for likes on post: " + userParam);
-        const res = await fetch(`http://18.188.18.22http://18.188.18.22//likes/${userParam}`);
+        const res = await fetch(`//likes/${userParam}`);
         const data = await res.json();
 
         setNumberOfLikes(data.length);
@@ -339,7 +339,7 @@ function OnePost() {
   useEffect(() => {
     //get alllllll friends
     const requestFreinds = async () => {
-      const res = await fetch("http://18.188.18.22//friends/");
+      const res = await fetch("//friends/");
       const data = await res.json();
       console.log("set allFriends with " + data);
       setAllFriendsFirebase(data.uid);
@@ -357,7 +357,7 @@ function OnePost() {
   useEffect(() => {
     //get alllllll friends by user
     const requestFreinds = async () => {
-      const res = await fetch(`http://18.188.18.22//friends/${name}`);
+      const res = await fetch(`//friends/${name}`);
       const data = await res.json();
       setUserFriends(data);
     };
@@ -398,7 +398,7 @@ function OnePost() {
       event.preventDefault();
 
       const commentData = async () => {
-        const res = await fetch("http://18.188.18.22//comments", {
+        const res = await fetch("//comments", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -520,7 +520,7 @@ function OnePost() {
       event.preventDefault();
 
       const replyData = async () => {
-        const res = await fetch("http://18.188.18.22//replys", {
+        const res = await fetch("//replys", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -550,7 +550,7 @@ function OnePost() {
     const likePost = () => {
       console.log("recording like to database");
       const recordLike = async () => {
-        const res = await fetch(`http://18.188.18.22//likes/`, {
+        const res = await fetch(`//likes/`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -568,7 +568,7 @@ function OnePost() {
       console.log("updating like count");
       const fetchPostLikes = async () => {
         try {
-          const res = await fetch(`http://18.188.18.22//likes/${userParam}`);
+          const res = await fetch(`//likes/${userParam}`);
           const data = await res.json();
           setNumberOfLikes(data.length); // number of likes isn't immediately accessible.  How do I fix this!
         } catch (error) {
@@ -581,7 +581,7 @@ function OnePost() {
     //make a friend functions
     const friendUser = () => {
       const recordFriend = async () => {
-        const res = await fetch(`http://18.188.18.22//friends/`, {
+        const res = await fetch(`//friends/`, {
           method: "POST",
           headers: {
             Accept: "application/json",
